@@ -1,0 +1,28 @@
+<!-- Bootstrap 5 Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Efecto Hover Dinámico para Cards -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const interactiveTiles = document.querySelectorAll('.tile-card[data-text]');
+
+    interactiveTiles.forEach(tile => {
+      const overlay = tile.querySelector('.tile-overlay');
+      const textField = overlay.querySelector('.overlay-text');
+
+      if (textField) {
+        textField.textContent = tile.getAttribute('data-text');
+      }
+
+      tile.addEventListener('mouseenter', () => {
+        tile.classList.add('is-active');
+        overlay.classList.add('is-active');
+      });
+
+      tile.addEventListener('mouseleave', () => {
+        tile.classList.remove('is-active');
+        overlay.classList.remove('is-active');
+      });
+    });
+  });
+</script> 

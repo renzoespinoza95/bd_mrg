@@ -1,0 +1,41 @@
+<section class="position-relative overflow-hidden" id="billboard">
+	<div class="swiper main-swiper swiper-creative swiper-3d swiper-horizontal">
+
+		<div class="swiper-wrapper">
+
+			{{#sliders}}
+			<div class="swiper-slide"
+				style='background-image: url("{{img}}"); 
+				background-size: cover;
+				background-repeat: no-repeat;
+				height: 100vh;
+				background-position: center center;'>
+
+				<div class="container">
+					<div class="row">
+						<div class="offset-md-6 col-md-6">
+							<div class="banner-content">
+
+							    <span class="slider-top-text">
+							        {{titulo_superior}}
+							    </span>
+
+							    <h1 class="slider-title">
+							        {{{descripcion}}}
+							    </h1>							   
+
+							</div>
+						</div>
+						<div class="col-md-5"></div>
+					</div>
+				</div>
+
+			</div>
+			{{/sliders}}
+
+		</div>
+
+		<div class="main-slider-pagination position-absolute text-center swiper-pagination"></div>
+
+	</div>
+</section>

@@ -1,0 +1,73 @@
+<!-- Top Utilities & Brand Contact -->
+<div class="top-header">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <a href="{{url_inicio}}" class="d-flex align-items-center text-decoration-none">
+      <div class="d-flex flex-column">
+        <span style="font-family: var(--font-titles); font-size: 2.2rem; color: #0d3b66; line-height: 0.85; letter-spacing: 2px;">{{cliente}}</span>
+        <span style="font-size: 0.58rem; letter-spacing: 2.5px; font-weight: 800; color: #666;">{{title}} S.A.</span>
+      </div>
+    </a>
+
+    <div class="d-flex align-items-center gap-3 gap-md-4">
+      <div class="d-none d-sm-flex align-items-center gap-1">
+        <a href="#" class="social-icon-box"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="social-icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="social-icon-box"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#" class="social-icon-box"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" class="social-icon-box"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid fa-phone text-warning"></i>
+        <span class="phone-badge">946 568 065</span>
+      </div>
+
+      <div class="anniversary-badge d-none d-md-block">
+        <span>{{anio}}</span>
+        AÑO<br>VREMHES
+      </div>
+
+      <button class="btn-drawer-toggle d-lg-none ms-2" type="button" data-bs-toggle="modal" data-bs-target="#mobileMenuDrawer" aria-label="Abrir Menú">
+        <i class="fa-solid fa-bars fs-5"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Navegación de Escritorio -->
+<nav class="nav-bar-container d-none d-lg-block">
+  <div class="container">
+    <ul class="nav main-nav justify-content-between p-0">
+      <li class="nav-item"><a class="nav-link" href="{{url_inicio}}">Inicio</a></li>
+      {{#nav_left}}
+      <li class="nav-item"><a class="nav-link" href="{{url}}">{{titulo}}</a></li>
+      {{/nav_left}}
+      {{#nav_right}}
+      <li class="nav-item"><a class="nav-link" href="{{url}}">{{titulo}}</a></li>
+      {{/nav_right}}
+    </ul>
+  </div>
+</nav>
+
+<!-- Modal Drawer Mobile -->
+<div class="modal fade modal-drawer" id="mobileMenuDrawer" tabindex="-1" aria-labelledby="mobileMenuLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span style="font-family: var(--font-titles); font-size: 1.8rem; color: #ffcd00; letter-spacing: 2px;">{{cliente}}</span>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <nav class="d-flex flex-column">
+          <a href="{{url_inicio}}" class="drawer-nav-link">Inicio <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+          {{#nav_left}}
+          <a href="{{url}}" class="drawer-nav-link">{{titulo}} <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+          {{/nav_left}}
+          {{#nav_right}}
+          <a href="{{url}}" class="drawer-nav-link">{{titulo}} <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+          {{/nav_right}}
+        </nav>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,25 @@
+<!-- Imagen Principal del Producto y Galería -->
+<div class="col-lg-4 col-md-6">
+  <div class="border p-2 bg-light shadow-sm rounded mb-2">
+    <img src="{{imagen_principal}}" 
+         alt="{{titulo}}" 
+         class="img-fluid rounded w-100" 
+         style="height: 310px; object-fit: cover;">
+  </div>
+
+  <!-- Miniaturas secundarias si existen -->
+  <div class="row g-2">
+    {{#imagenes}}
+    <div class="col-3">
+      <img src="{{url_img}}" class="img-thumbnail w-100" style="height: 60px; object-fit: cover;" alt="Miniatura">
+    </div>
+    {{/imagenes}}
+  </div>
+
+  <!-- Compartir en redes -->
+  <div class="d-flex gap-2 mt-3">
+    <a href="#" class="btn-social-share"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="#" class="btn-social-share"><i class="fa-brands fa-twitter"></i></a>
+    <a href="#" class="btn-social-share"><i class="fa-brands fa-linkedin-in"></i></a>
+  </div>
+</div> 

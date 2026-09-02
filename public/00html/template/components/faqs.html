@@ -1,0 +1,39 @@
+<section class="padding-xlarge" id="faqs">
+    <div class="container">
+        <div class="row">
+            <div class="offset-md-2 col-md-8">
+
+                <h3 class="text-center mb-5">{{faq_title}}</h3>
+
+                <div class="accordion accordion-flush" id="accordionFlush">
+
+                    {{#faqs}}
+                    <div class="accordion-item">
+
+                        <h4 class="accordion-header" id="heading-{{id}}">
+                            <button class="accordion-button collapsed"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapse-{{id}}">
+                            {{pregunta}}
+                        </button>
+                    </h4>
+
+                    <div id="collapse-{{id}}"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionFlush">
+
+                    <div class="accordion-body">
+                        <p>{{respuesta}}</p>
+                    </div>
+
+                </div>
+
+            </div>
+            {{/faqs}}
+
+        </div>
+
+    </div>
+</div>
+</div>
+</section>

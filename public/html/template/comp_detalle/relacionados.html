@@ -1,0 +1,24 @@
+<!-- Sección Productos Relacionados -->
+<div class="mt-4 pt-4 border-top">
+  <h3 class="text-center mb-4" style="font-size: 2rem;">CONVENIOS Y LOGOTIPOS</h3>
+  <div class="row justify-content-center g-3">
+    {{#logotipos}}
+    <div class="col-6 col-md-3">
+      <div class="tile-card"
+           data-title="Convenio Oficial" 
+           data-text="Alianza estratégica homologada para mantenimiento y distribución técnica.">
+        <img src="{{url_img}}" alt="Convenio">
+        <div class="tile-footer"><span>Convenio</span> <i class="fa-solid fa-plus"></i></div>
+        <div class="tile-overlay">
+          <div class="overlay-title"><span>CONVENIO</span> <i class="fa-solid fa-plus"></i></div>
+          <p class="overlay-text"></p>
+          <a href="{{url_inicio}}" class="btn-cat-pill w-100">
+            <span class="pill-text">VER MÁS</span>
+            <span class="pill-circle"><i class="fa-solid fa-arrow-right fa-xs"></i></span>
+          </a>
+        </div>
+      </div>
+    </div>
+    {{/logotipos}}
+  </div>
+</div> 
