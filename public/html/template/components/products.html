@@ -1,23 +1,29 @@
-<!-- Grid Uniforme de Cuadrados Idénticos (Aspect Ratio 1/1) -->
+<!-- Grid Uniforme de Cuadrados (reg_cat_pag_web con orden = 1) -->
 <main class="container pt-5 pb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+    <h2 class="m-0 fs-1" style="color: var(--mrg-blue);">LÍNEAS DE INGENIERÍA Y REPARACIONES</h2>
+  </div>
+
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mb-5 mt-2">
-    {{#products}}
+    {{#categorias}}
     <div class="col">
       <div class="tile-card"
+           data-catid="{{cat_id}}"
            data-title="{{titulo}}" 
-           data-text="Línea técnica y especializada. Inversión referencial: S/ {{precio}}">
+           data-text="{{descripcion}}"
+           data-subcats-b64="{{subcategorias_base64}}">
         <div class="tile-header">{{titulo}} <i class="fa-solid fa-plus"></i></div>
-        <img src="{{img}}" alt="{{titulo}}">
+        <img src="{{url_img}}" alt="{{titulo}}">
         <div class="tile-overlay">
           <div class="overlay-title"><span>{{titulo}}</span> <i class="fa-solid fa-plus"></i></div>
-          <p class="overlay-text"></p>
-          <a href="{{url}}" class="btn-cat-pill w-100">
+          <p class="overlay-text">{{descripcion}}</p>
+          <button type="button" class="btn-cat-pill w-100 btn-abrir-modal-cat">
             <span class="pill-text">EXPLORAR</span>
             <span class="pill-circle"><i class="fa-solid fa-arrow-right fa-xs"></i></span>
-          </a>
+          </button>
         </div>
       </div>
     </div>
-    {{/products}}
+    {{/categorias}}
   </div>
 </main>

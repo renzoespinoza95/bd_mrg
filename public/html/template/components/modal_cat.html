@@ -1,0 +1,49 @@
+<!-- Modal Dinámico Deslizante: Subcategorías -> Productos -->
+<div class="modal fade" id="modalCategoriasMRG" tabindex="-1" aria-labelledby="modalCatTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 14px; overflow: hidden;">
+      
+      <!-- Modal Header -->
+      <div class="modal-header text-white" style="background: var(--mrg-blue);">
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-sm text-white d-none" id="btnVolverSubcats" style="background: var(--mrg-gold);">
+            <i class="fa-solid fa-arrow-left me-1"></i> Volver
+          </button>
+          <h5 class="modal-title m-0" id="modalCatTitle" style="font-family: var(--font-titles); letter-spacing: 1px;">
+            SUBCATEGORÍAS
+          </h5>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Modal Body con animación deslizable hacia la derecha -->
+      <div class="modal-body p-0">
+        <div class="slider-modal-container">
+          <div class="slider-modal-track" id="sliderModalTrack">
+            
+            <!-- PANEL 1: Lista de Subcategorías -->
+            <div class="slider-modal-panel p-4" id="panelSubcats">
+              <p class="text-muted small mb-3">Selecciona una subcategoría para explorar los equipos y piezas disponibles:</p>
+              <div id="contenedorListaSubcats">
+                <!-- Se inyecta dinámicamente con JS -->
+              </div>
+            </div>
+
+            <!-- PANEL 2: Productos de la Subcategoría Seleccionada -->
+            <div class="slider-modal-panel p-4" id="panelProductos">
+              <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                <h6 class="m-0 fw-bold" id="txtSubcatSeleccionada" style="color: var(--mrg-blue);"></h6>
+                <span class="badge" style="background: var(--mrg-gold);" id="txtTotalItems"></span>
+              </div>
+              <div class="row g-3" id="contenedorListaProductos" style="max-height: 420px; overflow-y: auto;">
+                <!-- Se inyectan los productos dinámicamente -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div> 

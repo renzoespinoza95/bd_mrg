@@ -1,100 +1,85 @@
 <?php
 Flight::route('GET /', function () {
-
     include DEFINITION;
 
     visita();
     $mis_visitas = vari("visitas");
-
     $meta_description = vari('META_DESCRIPTION');
-
     $meta_keywords = vari('META_KEYWORDS');
-
     $titulo_pag_web = vari('TITULO_PAG_WEB');
 
-
-    // 🔥 BUSCAR ITEM VIDEO_INICIO
-    $itemVideo = DB::queryFirstRow("
-        SELECT item_pag_web_id
-        FROM reg_item_pag_web
-        WHERE clave_txt = 'VIDEO_INICIO'
-        LIMIT 1
-    ");
-
-    $video_inicio = null;
-
-    if($itemVideo){
-
-        $video = DB::queryFirstRow("
-            SELECT codigo_web
-            FROM reg_pag_item_vid
-            WHERE item_pag_web_id = %i
-            ORDER BY orden ASC
-            LIMIT 1
-        ", $itemVideo['item_pag_web_id']);
-
-        if($video){
-            $video_inicio = $video['codigo_web'];
-        }
-    }
-
-    // 🔥 SLIDER
+    // 🔥 SLIDERS
     $sliders = DB::query("
-        SELECT
-            slider_id,
-            img,
-            orden,
-            descripcion,
-            titulo_superior
+        SELECT slider_id, img, orden, descripcion, titulo_superior
         FROM reg_slider
-        WHERE neg_id = %i
-          AND is_visible = 1
+        WHERE neg_id = %i AND is_visible = 1
         ORDER BY orden ASC
     ", $pag_web_neg_id);
 
-    $about = DB::queryFirstRow("
-        SELECT
-            titulo,
-            contenido
-        FROM reg_item_pag_web
-        WHERE clave_txt = 'TXT_NOSOTROS'
-        LIMIT 1
-    ");    
+    // 🔥 CATEGORÍAS CON ORDEN = 1 (Sin la columna 'descripcion')
+    $categorias_raw = DB::query("
+        SELECT cat_pag_web_id, titulo, url_img
+        FROM reg_cat_pag_web
+        WHERE orden = 1 AND is_visible = 1 AND neg_id = %i
+        ORDER BY cat_pag_web_id ASC
+    ", $pag_web_neg_id);
 
-    // 🔥 PRODUCTOS
-    $productos = DB::query("
-        SELECT
-            i.item_pag_web_id,
-            i.titulo,
-            i.url_amigable,
-            i.precio,
-            (
-                SELECT url_img 
-                FROM reg_pag_item_img img
-                WHERE img.item_pag_web_id = i.item_pag_web_id
-                ORDER BY img.orden ASC
-                LIMIT 1
-            ) AS img
-        FROM reg_item_pag_web i
-        INNER JOIN reg_subcat_pag_web s 
-            ON s.subcat_pag_web_id = i.subcat_pag_web_id
-        INNER JOIN reg_cat_pag_web c 
-            ON c.cat_pag_web_id = s.cat_pag_web_id
-        WHERE c.neg_id = %i
-          AND s.clave_txt = %s
-        ORDER BY i.orden ASC, i.item_pag_web_id ASC
-        LIMIT 10
-    ", $pag_web_neg_id, 'TXT_INGENIERIA');
+    $categorias = [];
+    foreach ($categorias_raw as $c) {
+        // Consultar subcategorías (la tabla reg_subcat_pag_web sí posee 'descripcion')
+        $subcats_raw = DB::query("
+            SELECT subcat_pag_web_id, titulo, descripcion
+            FROM reg_subcat_pag_web
+            WHERE cat_pag_web_id = %i AND is_visible = 1
+            ORDER BY orden ASC, subcat_pag_web_id ASC
+        ", $c['cat_pag_web_id']);
 
+        $subcategorias = [];
+        foreach ($subcats_raw as $s) {
+            // Consultar ítems/productos
+            $items_raw = DB::query("
+                SELECT i.item_pag_web_id, i.titulo, i.url_amigable, i.precio,
+                       (SELECT url_img FROM reg_pag_item_img img WHERE img.item_pag_web_id = i.item_pag_web_id ORDER BY img.orden ASC LIMIT 1) AS img
+                FROM reg_item_pag_web i
+                WHERE i.subcat_pag_web_id = %i
+                ORDER BY i.orden ASC, i.item_pag_web_id ASC
+            ", $s['subcat_pag_web_id']);
+
+            $productos = array_map(function($it) use ($apphost) {
+                return [
+                    'item_pag_web_id' => $it['item_pag_web_id'],
+                    'titulo' => $it['titulo'],
+                    'precio' => number_format($it['precio'], 2),
+                    'img' => $it['img'] ?: 'assets/logo-mrg.jpg',
+                    'url' => $apphost . '/item/' . $it['item_pag_web_id'] . '-' . $it['url_amigable']
+                ];
+            }, $items_raw);
+
+            $subcategorias[] = [
+                'subcat_id' => $s['subcat_pag_web_id'],
+                'titulo' => $s['titulo'],
+                'descripcion' => $s['descripcion'] ?: '',
+                'productos' => $productos,
+                'total_productos' => count($productos)
+            ];
+        }
+
+        $categorias[] = [
+            'cat_id' => $c['cat_pag_web_id'],
+            'titulo' => $c['titulo'],
+            'url_img' => $c['url_img'] ?: 'assets/logo-mrg.jpg',
+            'descripcion' => 'Línea especializada de ingeniería y servicios.',
+            'subcategorias_base64' => base64_encode(json_encode($subcategorias, JSON_UNESCAPED_UNICODE))
+        ];
+    }
+
+    
+    
+    // TOPNAVBAR
     $rows = DB::query("
-        SELECT 
-            i.item_pag_web_id, 
-            i.titulo, 
-            i.subtitulo_detalle,
-            i.url_amigable
+        SELECT i.item_pag_web_id, i.titulo, i.url_amigable
         FROM reg_item_pag_web i
-        INNER JOIN reg_subcat_pag_web s 
-            ON s.subcat_pag_web_id = i.subcat_pag_web_id
+        INNER JOIN reg_subcat_pag_web s ON s.subcat_pag_web_id = i.subcat_pag_web_id
         WHERE s.clave_txt = %s
         ORDER BY i.orden ASC, i.item_pag_web_id ASC
         LIMIT 6
@@ -104,8 +89,8 @@ Flight::route('GET /', function () {
     $right = array_slice($rows, 3, 3);
 
     $data = [
-        'logo' => 'assets/main-logo.png',
-        'title' => 'VREMHES SAC',
+        'logo' => 'assets/logo-mrg.jpg',
+        'title' => 'MRG ASESORAMIENTO Y REPARACIONES',
         'favicon' => $varhost . '/public/ico/favicon.png',
         'base' => $base,
         'version' => $version,
@@ -113,145 +98,29 @@ Flight::route('GET /', function () {
         'meta_keywords' => $meta_keywords,
         'titulo_pag_web' => $titulo_pag_web,
         'url_inicio' => $apphost,
-        'fontawesome_url' => $varhost . '/public/bootstrap/font-awesome/css/font-awesome.css'
+        'visitas' => $mis_visitas,
+        'categorias' => $categorias,
+        'sliders' => $sliders
     ];
 
     $data['nav_left'] = array_map(function($r) use ($apphost){
-        return [
-            'titulo' => $r['titulo'],
-            'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']
-        ];
+        return ['titulo' => $r['titulo'], 'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']];
     }, $left);
 
     $data['nav_right'] = array_map(function($r) use ($apphost){
-        return [
-            'titulo' => $r['titulo'],
-            'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']
-        ];
+        return ['titulo' => $r['titulo'], 'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']];
     }, $right);
 
-    $data['products_title'] = 'Especialidades';
-    $data['products_btn']   = 'Ver todos';
-    $data['products_url']   = $apphost;
-
-    $data['products'] = array_map(function($p) use ($apphost){
-        return [
-            'titulo' => $p['titulo'],
-            'precio' => number_format($p['precio'], 2),
-            'img' => $p['img'] ?: 'https://picsum.photos/300/300',
-            'url' => $apphost . '/item/' . $p['item_pag_web_id'] . '-' . $p['url_amigable']
-        ];
-    }, $productos);
-
-    $data['sliders'] = array_map(function($s){
-
-        return [
-            'img' => $s['img'],
-
-            // usa lo que viene de BD
-            'titulo_superior' => $s['titulo_superior'] ?: 'BIENVENIDO A VREMHES',
-            'descripcion' => $s['descripcion'] ?: ''
-        ];
-
-    }, $sliders);
-
-
-    $faqs = DB::query("
-    SELECT
-        i.item_pag_web_id,
-        i.titulo,
-        i.contenido
-    FROM reg_item_pag_web i
-    INNER JOIN reg_subcat_pag_web s 
-        ON s.subcat_pag_web_id = i.subcat_pag_web_id
-    WHERE s.clave_txt = %s
-    ORDER BY i.orden ASC, i.item_pag_web_id ASC
-", 'TXT_FAQ');
-
-    $data['faq_title'] = 'Preguntas Frecuentes Técnicas';
-
-    $data['faqs'] = array_map(function($f, $i){
-        return [
-            'id' => $i + 1,
-            'pregunta' => $f['titulo'],
-            'respuesta' => $f['contenido']
-        ];
-    }, $faqs, array_keys($faqs));
-
-
-    $data['about_tag'] = 'Nosotros';
-
-    $data['visitas'] = $mis_visitas;
-
-    $data['about_titulo'] = $about ? $about['titulo'] : 'Sobre nosotros';
-
-    $data['about_contenido'] = $about ? $about['contenido'] : '';
-
-    $item_txt_banner = DB::queryFirstRow("
-        SELECT item_pag_web_id, titulo
-        FROM reg_item_pag_web
-        WHERE clave_txt = 'TXT_BANNER'
-        LIMIT 1
-    ");
-
-    $imagenes = [];
-
-    if ($item_txt_banner) {
-        $imagenes = DB::query("
-            SELECT
-                url_img,
-                orden
-            FROM reg_pag_item_img
-            WHERE item_pag_web_id = %i
-            ORDER BY orden ASC
-        ", $item_txt_banner['item_pag_web_id']);
-    }
-
-    $data['banners'] = array_map(function($img, $i) use ($item_txt_banner){
-
-        return [
-            'img' => $img['url_img'],
-            'index' => $i + 1,
-            'titulo' => $item_txt_banner['titulo'],
-            'url' => '#',
-            'texto_btn' => 'Ver más'
-        ];
-
-    }, $imagenes, array_keys($imagenes));
-
-
-    $testimonials = DB::query("
-        SELECT
-            i.item_pag_web_id,
-            i.titulo,
-            i.contenido
-        FROM reg_item_pag_web i
-        INNER JOIN reg_subcat_pag_web s 
-            ON s.subcat_pag_web_id = i.subcat_pag_web_id
-        WHERE s.clave_txt = %s
-        ORDER BY i.orden ASC, i.item_pag_web_id ASC
-    ", 'TXT_TESTIMONIALS');
-
-    $data['testimonials_title'] = 'Soluciones';
-
-    $data['testimonials'] = array_map(function($t){
-        return [
-            'titulo' => $t['titulo'],
-            'contenido' => $t['contenido']
-        ];
-    }, $testimonials);    
-
-    $data['video_inicio'] = $video_inicio;
-
     $partials = [
-            'head' => file_get_contents(VARPATH . '/public/html/template/components/head.html'),
-            'header' => file_get_contents(VARPATH . '/public/html/template/components/header.html'),
-            'slider' => file_get_contents(VARPATH . '/public/html/template/components/slider.html'),
-            'products' => file_get_contents(VARPATH . '/public/html/template/components/products.html'),
-            'canallinks' => file_get_contents(VARPATH . '/public/html/template/components/canallinks.html'),
-            'strip' => file_get_contents(VARPATH . '/public/html/template/components/strip.html'),
-            'footer' => file_get_contents(VARPATH . '/public/html/template/components/footer.html'),
-            'scripts' => file_get_contents(VARPATH . '/public/html/template/components/scripts.html'),
+        'head'       => file_get_contents(VARPATH . '/public/html/template/components/head.html'),
+        'header'     => file_get_contents(VARPATH . '/public/html/template/components/header.html'),
+        'slider'     => file_get_contents(VARPATH . '/public/html/template/components/slider.html'),
+        'products'   => file_get_contents(VARPATH . '/public/html/template/components/products.html'),
+        'modal_cat'  => file_get_contents(VARPATH . '/public/html/template/components/modal_cat.html'),
+        'canallinks' => file_get_contents(VARPATH . '/public/html/template/components/canallinks.html'),
+        'strip'      => file_get_contents(VARPATH . '/public/html/template/components/strip.html'),
+        'footer'     => file_get_contents(VARPATH . '/public/html/template/components/footer.html'),
+        'scripts'    => file_get_contents(VARPATH . '/public/html/template/components/scripts.html'),
     ];
 
     echo (new Mustache)->render(

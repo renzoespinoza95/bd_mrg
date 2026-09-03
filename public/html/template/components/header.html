@@ -1,19 +1,19 @@
-<!-- Barra Principal / Header -->
-<header class="bg-white border-bottom py-2">
+<!-- Barra Principal / Header con Logo MRG -->
+<header class="bg-white border-bottom py-2 sticky-top shadow-sm">
   <div class="container d-flex justify-content-between align-items-center">
-    <!-- Logo -->
+    <!-- Logo MRG desde URL fija -->
     <a href="{{url_inicio}}" class="d-flex align-items-center text-decoration-none">
-      <span class="bg-warning px-2 py-1 fw-bold me-1 text-black fs-5">Ferreyros</span>
-      <span class="bg-dark text-white px-2 py-1 fw-bold fs-5">CAT</span>
+      <img src="http://localhost:84/bd_mrg/public/html/template/assets/logo_mrg.jpg" alt="MRG ASESORAMIENTO Y REPARACIONES" class="brand-logo-img me-2">
     </a>
 
-    <!-- Menú Desktop Horizontal -->
-    <nav class="nav main-nav d-none d-lg-flex">
+    <!-- Menú Desktop Horizontal sin flechas hacia abajo -->
+    <nav class="nav main-nav d-none d-lg-flex align-items-center">
+      <a class="nav-link" href="{{url_inicio}}">INICIO</a>
       {{#nav_left}}
-      <a class="nav-link" href="{{url}}">{{titulo}} <i class="fa-solid fa-chevron-down fa-2xs ms-1"></i></a>
+      <a class="nav-link" href="{{url}}">{{titulo}}</a>
       {{/nav_left}}
       {{#nav_right}}
-      <a class="nav-link" href="{{url}}">{{titulo}} <i class="fa-solid fa-chevron-down fa-2xs ms-1"></i></a>
+      <a class="nav-link" href="{{url}}">{{titulo}}</a>
       {{/nav_right}}
     </nav>
 
@@ -29,41 +29,24 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="d-flex align-items-center" style="font-family: var(--font-body);">
-          <span class="bg-warning px-2 py-1 fw-bold me-1 text-black fs-6">Ferreyros</span>
-          <span class="bg-dark text-white px-2 py-1 fw-bold fs-6">CAT</span>
-        </div>
+        <img src="http://localhost:84/bd_mrg/public/html/template/assets/logo_mrg.jpg" alt="MRG ASESORAMIENTO Y REPARACIONES" style="max-height: 40px; background:#fff; padding:3px 6px; border-radius:4px;">
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <div class="mb-3">
-          <input type="text" class="form-control rounded-pill bg-dark text-white border-secondary small-body-text" placeholder="Buscar productos, repuestos...">
-        </div>
-
-        <!-- Enlaces Principales -->
         <nav class="d-flex flex-column mb-3">
+          <a href="{{url_inicio}}" class="drawer-nav-link">Inicio</a>
           {{#nav_left}}
-          <a href="{{url}}" class="drawer-nav-link">{{titulo}} <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+          <a href="{{url}}" class="drawer-nav-link">{{titulo}}</a>
           {{/nav_left}}
           {{#nav_right}}
-          <a href="{{url}}" class="drawer-nav-link">{{titulo}} <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+          <a href="{{url}}" class="drawer-nav-link">{{titulo}}</a>
           {{/nav_right}}
         </nav>
-
-        <!-- Enlaces de utilidad integrados para móvil -->
-        <div class="pt-2 border-top border-secondary">
-          <div class="row">
-            <div class="col-6">
-              <a href="#" class="utility-sublink"><i class="fa-solid fa-laptop me-1"></i> FERREYNET</a>
-              <a href="#" class="utility-sublink"><i class="fa-solid fa-location-dot me-1"></i> LOCALES</a>
-            </div>
-            <div class="col-6">
-              <a href="#" class="utility-sublink"><i class="fa-solid fa-envelope me-1"></i> ESCRÍBANOS</a>
-              <a href="#" class="utility-sublink"><i class="fa-solid fa-headset me-1"></i> ATENCIÓN</a>
-            </div>
-          </div>
+        
+        <div class="pt-2 border-top border-secondary text-light small-body-text">
+          <span>Visitas: {{visitas}}</span>
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>

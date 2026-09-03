@@ -1,34 +1,131 @@
 <!-- Bootstrap 5 Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Hover dinámico y activación del primer slider -->
+<!-- Lógica de Cards, Modal Deslizante y Navegación Dinámica -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Activar el primer elemento del carrusel si no tiene active por defecto
-    const firstSlide = document.querySelector('#heroCatCarousel .carousel-item');
-    if (firstSlide) {
-      firstSlide.classList.add('active');
-    }
+  // 1. Activar el primer ítem del carrusel si existe
+  const firstSlide = document.querySelector('#heroCatCarousel .carousel-item');
+  if (firstSlide) {
+    firstSlide.classList.add('active');
+  }
 
-    const interactiveTiles = document.querySelectorAll('.tile-card[data-text]');
+  // 2. Efecto Hover dinámico en las tarjetas 1:1
+  const interactiveTiles = document.querySelectorAll('.tile-card');
+  interactiveTiles.forEach(tile => {
+    const overlay = tile.querySelector('.tile-overlay');
 
-    interactiveTiles.forEach(tile => {
-      const overlay = tile.querySelector('.tile-overlay');
-      const textField = overlay.querySelector('.overlay-text');
-      
-      if (textField) {
-        textField.textContent = tile.getAttribute('data-text');
-      }
+    tile.addEventListener('mouseenter', () => {
+      tile.classList.add('is-active');
+      if (overlay) overlay.classList.add('is-active');
+    });
 
-      tile.addEventListener('mouseenter', () => {
-        tile.classList.add('is-active');
-        overlay.classList.add('is-active');
-      });
-
-      tile.addEventListener('mouseleave', () => {
-        tile.classList.remove('is-active');
-        overlay.classList.remove('is-active');
-      });
+    tile.addEventListener('mouseleave', () => {
+      tile.classList.remove('is-active');
+      if (overlay) overlay.classList.remove('is-active');
     });
   });
-</script> 
+
+  // 3. Modal Deslizante hacia la Derecha (Subcategorías -> Productos)
+  const modalElement = document.getElementById('modalCategoriasMRG');
+  if (modalElement) {
+    const modalBootstrap = new bootstrap.Modal(modalElement);
+    const modalTitle = document.getElementById('modalCatTitle');
+    const sliderTrack = document.getElementById('sliderModalTrack');
+    const btnVolver = document.getElementById('btnVolverSubcats');
+    const contSubcats = document.getElementById('contenedorListaSubcats');
+    const contProductos = document.getElementById('contenedorListaProductos');
+    const txtSubcatSel = document.getElementById('txtSubcatSeleccionada');
+    const txtTotalItems = document.getElementById('txtTotalItems');
+
+    let categoriaActualTitulo = '';
+
+    // Clic en el botón "EXPLORAR" de una tarjeta
+    document.querySelectorAll('.btn-abrir-modal-cat').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const card = btn.closest('.tile-card');
+        categoriaActualTitulo = card.getAttribute('data-title') || 'CATEGORÍA';
+
+        // Decodificación segura en Base64 con soporte para caracteres UTF-8 (tildes, ñ)
+        let subcatsData = [];
+        const rawB64 = card.getAttribute('data-subcats-b64');
+        if (rawB64) {
+          try {
+            const jsonString = decodeURIComponent(escape(atob(rawB64)));
+            subcatsData = JSON.parse(jsonString);
+          } catch (err) {
+            console.error('Error al decodificar subcategorías:', err);
+            subcatsData = [];
+          }
+        }
+
+        // Reiniciar animación y posición hacia el panel de subcategorías
+        sliderTrack.classList.remove('slide-right');
+        btnVolver.classList.add('d-none');
+        modalTitle.textContent = categoriaActualTitulo + ' - SUBCATEGORÍAS';
+
+        // Inyectar subcategorías
+        contSubcats.innerHTML = '';
+        if (subcatsData.length === 0) {
+          contSubcats.innerHTML = '<div class="alert alert-warning text-center">No hay subcategorías registradas en este momento.</div>';
+        } else {
+          subcatsData.forEach(sub => {
+            const div = document.createElement('div');
+            div.className = 'subcat-list-item';
+            div.innerHTML = `
+              <span>${sub.titulo}</span>
+              <span class="badge rounded-pill">${sub.total_productos} ítems <i class="fa-solid fa-chevron-right ms-1 fa-2xs"></i></span>
+            `;
+
+            // Al hacer clic en una subcategoría: animar hacia la derecha y listar ítems
+            div.addEventListener('click', () => {
+              mostrarProductosDeSubcat(sub);
+            });
+
+            contSubcats.appendChild(div);
+          });
+        }
+
+        modalBootstrap.show();
+      });
+    });
+
+    // Función que carga los productos y desplaza el contenedor a la derecha
+    function mostrarProductosDeSubcat(sub) {
+      txtSubcatSel.textContent = sub.titulo;
+      txtTotalItems.textContent = `${sub.total_productos} disponibles`;
+      contProductos.innerHTML = '';
+
+      if (sub.productos.length === 0) {
+        contProductos.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">No hay productos registrados en esta subcategoría.</div></div>';
+      } else {
+        sub.productos.forEach(prod => {
+          const col = document.createElement('div');
+          col.className = 'col-6 col-md-4';
+          col.innerHTML = `
+            <a href="${prod.url}" class="product-list-card">
+              <img src="${prod.img}" alt="${prod.titulo}">
+              <h6>${prod.titulo}</h6>
+              <div class="price-tag">S/ ${prod.precio}</div>
+            </a>
+          `;
+          contProductos.appendChild(col);
+        });
+      }
+
+      // Desplazamiento animado
+      sliderTrack.classList.add('slide-right');
+      btnVolver.classList.remove('d-none');
+      modalTitle.textContent = sub.titulo;
+    }
+
+    // Botón para regresar al panel de subcategorías
+    btnVolver.addEventListener('click', () => {
+      sliderTrack.classList.remove('slide-right');
+      btnVolver.classList.add('d-none');
+      modalTitle.textContent = categoriaActualTitulo + ' - SUBCATEGORÍAS';
+    });
+  }
+});
+</script>
