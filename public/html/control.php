@@ -7,6 +7,13 @@ Flight::route('GET /', function () {
     $meta_description = vari('META_DESCRIPTION');
     $meta_keywords = vari('META_KEYWORDS');
     $titulo_pag_web = vari('TITULO_PAG_WEB');
+    // Obtener celular dinámico del sistema y formatear para WhatsApp
+    $celular = vari('CELULAR');
+    $celular_limpio = preg_replace('/[^0-9]/', '', $celular);
+    if (strlen($celular_limpio) === 9) {
+        $celular_limpio = '51' . $celular_limpio;
+    }
+    $url_whatsapp = 'https://wa.me/' . $celular_limpio;
 
     // 🔥 SLIDERS
     $sliders = DB::query("
@@ -103,6 +110,9 @@ Flight::route('GET /', function () {
         'sliders' => $sliders
     ];
 
+    $data['celular'] = $celular;
+    $data['url_whatsapp'] = $url_whatsapp;
+
     $data['nav_left'] = array_map(function($r) use ($apphost){
         return ['titulo' => $r['titulo'], 'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']];
     }, $left);
@@ -153,6 +163,14 @@ Flight::route('GET /item/@slug', function ($slug) {
 
     $titulo_pag_web = vari('TITULO_PAG_WEB');
 
+    // Obtener celular dinámico del sistema y formatear para WhatsApp
+    $celular = vari('CELULAR');
+    $celular_limpio = preg_replace('/[^0-9]/', '', $celular);
+    if (strlen($celular_limpio) === 9) {
+        $celular_limpio = '51' . $celular_limpio;
+    }
+    $url_whatsapp = 'https://wa.me/' . $celular_limpio;
+
     // =========================
     // NAVBAR
     // =========================
@@ -185,6 +203,9 @@ Flight::route('GET /item/@slug', function ($slug) {
             'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']
         ];
     }, $right);
+
+    $data['celular'] = $celular;
+    $data['url_whatsapp'] = $url_whatsapp;
 
     // =========================
     // ITEM
@@ -288,7 +309,7 @@ Flight::route('GET /item/@slug', function ($slug) {
     $data['testimonios'] = [
         [
             'texto' => 'Excelente servicio técnico especializado',
-            'autor' => 'Cliente Vremhes'
+            'autor' => 'Cliente MRG'
         ],
         [
             'texto' => 'Alta confiabilidad en reparación minera',
@@ -304,7 +325,7 @@ Flight::route('GET /item/@slug', function ($slug) {
     $data['meta_description'] = $meta_description;
     $data['meta_keywords'] = $meta_keywords;
 
-    $data['cliente'] = "VREMHES";
+    $data['cliente'] = "MRG";
     $data['anio'] = 2026;
     $data['categoria'] = "METAL MECANICA - MINERIA";
 
