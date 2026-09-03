@@ -4,8 +4,27 @@
   <title>{{titulo_pag_web}}</title>
   <meta name="description" content="{{meta_description}}">
   <meta name="keywords" content="{{meta_keywords}}">
+  <meta name="author" content="MRG Asesoramiento y Reparaciones">
   <base href="{{base}}">
   <link rel="icon" type="image/png" href="{{favicon}}">
+
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{titulo_pag_web}}">
+  <meta property="og:description" content="{{meta_description}}">
+  <meta property="og:image" content="https://barsi-img.b-cdn.net/t_mrg/1fta7k.jpg">
+  <meta property="og:image:secure_url" content="https://barsi-img.b-cdn.net/t_mrg/1fta7k.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="{{url_inicio}}">
+  <meta property="og:site_name" content="MRG Asesoramiento y Reparaciones">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{titulo_pag_web}}">
+  <meta name="twitter:description" content="{{meta_description}}">
+  <meta name="twitter:image" content="https://barsi-img.b-cdn.net/t_mrg/1fta7k.jpg">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +38,6 @@
 
   <style>
     :root {
-      /* Colores extraídos del logo MRG */
       --mrg-blue: #242878;
       --mrg-blue-dark: #171a54;
       --mrg-gold: #b79237;
@@ -43,14 +61,12 @@
       letter-spacing: 1px;
     }
 
-    /* Logo corporativo responsivo 350x60 */
     .brand-logo-img {
       max-height: 52px;
       width: auto;
       object-fit: contain;
     }
 
-    /* Navegación */
     .main-nav .nav-link {
       font-family: var(--font-titles);
       color: var(--mrg-blue);
@@ -63,7 +79,6 @@
       color: var(--mrg-gold);
     }
 
-    /* Botón Móvil */
     .btn-drawer-toggle {
       background: var(--mrg-blue);
       color: #fff;
@@ -105,7 +120,6 @@
       color: var(--mrg-gold);
     }
 
-    /* Botón Píldora con estética MRG */
     .btn-cat-pill {
       font-family: var(--font-titles);
       display: inline-flex;
@@ -170,7 +184,6 @@
       font-size: 0.7rem;
     }
 
-    /* Slider */
     .hero-slider-section {
       position: relative;
       background-color: #000;
@@ -215,7 +228,6 @@
       z-index: 20;
     }
 
-    /* Cuadrados 1:1 */
     .tile-card {
       position: relative;
       width: 100%;
@@ -291,7 +303,6 @@
       margin: auto 0;
     }
 
-    /* Franja Dorada Inferior */
     .yellow-strip {
       background-color: var(--mrg-gold);
       padding: 22px 0;
@@ -318,9 +329,6 @@
       font-size: 0.75rem;
     }
 
-    /* ========================================================
-       MODAL SLIDER HACIA LA DERECHA PARA SUBCATEGORÍAS & PRODUCTOS
-       ======================================================== */
     .slider-modal-container {
       overflow: hidden;
       position: relative;
@@ -337,7 +345,6 @@
       padding: 10px 5px;
       box-sizing: border-box;
     }
-    /* Clase que traslada el contenedor hacia el panel de productos */
     .slider-modal-track.slide-right {
       transform: translateX(-50%);
     }
