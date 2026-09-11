@@ -1,0 +1,66 @@
+<div id="modalEditarSlider" class="modal hide fade fullscreen" tabindex="-1">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Editar Slider</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label">Imagen</label>
+        <div class="controls">
+          <input type="file" @change="onFileChange($event, 'editar')">
+          <div v-if="formulario.imgPreview" class="mt-2" style="margin-top: 8px;">
+            <img :src="formulario.imgPreview" style="max-width:200px; max-height:100px;" />
+          </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Descripción</label>
+        <div class="controls">
+          <textarea id="snEditarDescripcion"></textarea>
+        </div>
+      </div>         
+      <div class="control-group">
+        <label class="control-label">Grupo</label>
+        <div class="controls">
+          <select v-model="formulario.grupo" class="input-medium">
+            <option value="">Seleccione</option>
+            <option v-for="l in letrasAZ" :key="l" :value="l" v-text="l"></option>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Orden</label>
+        <div class="controls">
+          <input type="number" v-model.number="formulario.orden" class="input-small">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Visible</label>
+        <div class="controls">
+          <select v-model.number="formulario.is_visible" class="input-small">
+            <option :value="1">Sí</option>
+            <option :value="0">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Fecha Creación</label>
+        <div class="controls">
+          <input type="datetime-local" v-model="formulario.fecha_creacion" class="input-medium">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Fecha Fin</label>
+        <div class="controls">
+          <input type="datetime-local" v-model="formulario.fecha_fin" class="input-medium">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer" style="text-align: left;">
+    <button class="btn btn-primary" @click="guardarEdicion">Guardar</button>
+    <button class="btn btn-info" @click="actualizarDescripcion">Descripción</button>
+    <button class="btn" data-dismiss="modal">Cancelar</button>
+  </div>
+</div>

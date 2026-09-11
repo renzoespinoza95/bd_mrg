@@ -7,26 +7,31 @@
       <span style="font-weight: 800; font-size: 0.9rem; color: #444;">{{cliente}} SAC</span>
     </div>
 
-    <div class="spec-table-header">{{titulo}}</div>
-    <table class="spec-table">
-      <tbody>
-        <tr>
-          <td>Cliente / Fabricante</td>
-          <td>{{cliente}}</td>
-        </tr>
-        <tr>
-          <td>Año de Referencia</td>
-          <td>{{anio}}</td>
-        </tr>
-        <tr>
-          <td>Categoría Industrial</td>
-          <td>{{categoria}}</td>
-        </tr>
-        <tr>
-          <td>Estado Operativo</td>
-          <td>Disponible / Certificado</td>
-        </tr>
-      </tbody>
-    </table>
+    {{#html01}}
+      {{{html01}}}
+    {{/html01}}
+    {{^html01}}
+      <div class="spec-table-header">{{titulo}}</div>
+      <table class="spec-table">
+        <tbody>
+          <tr>
+            <td>Cliente / Fabricante</td>
+            <td>{{cliente}}</td>
+          </tr>
+          <tr>
+            <td>Año de Referencia</td>
+            <td>{{anio}}</td>
+          </tr>
+          <tr>
+            <td>Categoría Industrial</td>
+            <td>{{categoria}}</td>
+          </tr>
+          <tr>
+            <td>Estado Operativo</td>
+            <td>Disponible / Certificado</td>
+          </tr>
+        </tbody>
+      </table>
+    {{/html01}}
   </div>
-</div> 
+</div>

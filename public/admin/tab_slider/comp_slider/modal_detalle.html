@@ -1,0 +1,21 @@
+<div id="modalDetalleSlider" class="modal hide fade" tabindex="-1">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Detalle Slider</h3>
+  </div>
+  <div class="modal-body">
+    <dl class="dl-horizontal">
+      <dt>ID</dt><dd v-text="detalle.slider_id"></dd>
+      <dt>Grupo</dt><dd v-text="detalle.grupo || '-'"></dd>
+      <dt>Imagen</dt><dd><img :src="detalle.img_thumb" style="max-width:200px; max-height:100px;" /></dd>
+      <dt>Descripcion</dt><dd v-html="detalle.descripcion"></dd>
+      <dt>Orden</dt><dd v-text="detalle.orden"></dd>
+      <dt>Visible</dt><dd v-text="detalle.is_visible == 1 ? 'Sí' : 'No'"></dd>          
+      <dt>Fin</dt><dd v-text="detalle.fecha_fin"></dd>
+      <dt>Negocio ID</dt><dd v-text="detalle.neg_id"></dd>
+    </dl>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal">Cerrar</button>
+  </div>
+</div>

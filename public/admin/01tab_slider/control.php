@@ -2,23 +2,30 @@
 // este es mi backend usando php8.2 con flightphp y meekrodb2
 
 function resizeTo800Jpg(string $pathTmp): string {
+
     $src = imagecreatefromstring(file_get_contents($pathTmp));
     if (!$src) {
         throw new Exception('No se pudo crear la imagen');
     }
 
+    // 🔥 Usar constante ANCHO_SLIDER
     $newW = defined('ANCHO_SLIDER') ? ANCHO_SLIDER : 610;
 
+    // Tamaño original
     $w = imagesx($src);
     $h = imagesy($src);
 
+    // Calcular alto proporcional
     $newH = intval(($newW * $h) / $w);
 
+    // Crear imagen destino
     $dst = imagecreatetruecolor($newW, $newH);
 
+    // Fondo blanco (porque el destino final es JPG)
     $white = imagecolorallocate($dst, 255, 255, 255);
     imagefill($dst, 0, 0, $white);
 
+    // Redimensionar proporcional
     imagecopyresampled(
         $dst, $src,
         0, 0, 0, 0,
@@ -26,6 +33,7 @@ function resizeTo800Jpg(string $pathTmp): string {
         $w, $h
     );
 
+    // Archivo temporal JPG
     $tempOut = tempnam(sys_get_temp_dir(), 'slider_') . '.jpg';
     imagejpeg($dst, $tempOut, 90);
 
@@ -36,7 +44,10 @@ function resizeTo800Jpg(string $pathTmp): string {
 }
 
 function bunnyDelete(string $fileOrUrl): bool {
+
+    // Si viene URL completa, extraer solo el filename
     $filename = basename($fileOrUrl);
+
     $url = BUNNY_STORAGE_URL . '/' . SLIDER_DIR . '/' . $filename;
 
     $headers = [
@@ -54,6 +65,7 @@ function bunnyDelete(string $fileOrUrl): bool {
 
     return ($status == 200 || $status == 204);
 }
+
 
 function bunnyUpload(string $localPath, string $destName): bool {
     $url = BUNNY_STORAGE_URL . '/' . SLIDER_DIR . '/' . $destName;
@@ -78,65 +90,17 @@ function bunnyUpload(string $localPath, string $destName): bool {
 }
 
 /* -------------------------- */
-/* Vistas SLIDER con Mustache */
+/* Vistas SLIDER             */
 /* -------------------------- */
 Flight::route('GET /slider/inicio', function () {
     include DEFINITION;
     autentificar_administrador();
 
-    ob_start();
-    perso::vuejs2();
-    perso::vue_select();
-    perso::start();
-    perso::favicon();
-    perso::font_awesome();
-    perso::jquery2();
-    perso::jquery_ui();
-    perso::js();
-    perso::apprise();
-    perso::block_ui();
-    perso::perso($version);
-    perso::global_env($apphost, $varhost);
-    perso::datatables();
-    perso::summernote();
-    $assets_head = ob_get_clean();
-
-    ob_start();
-    include VARPATH . "/public/admin/menu.php";
-    $menu_html = ob_get_clean();
-
-    ob_start();
-    include VARPATH . "/public/admin/footer.php";
-    $footer_html = ob_get_clean();
-
-    $data = [
-        'title'       => 'Gestión de Sliders',
-        'varhost'     => $varhost,
-        'apphost'     => $apphost,
-        'assets_head' => $assets_head,
-        'menu_html'   => $menu_html,
-        'footer_html' => $footer_html
-    ];
-
-    $basePath = VARPATH . '/public/admin/tab_slider/comp_slider';
-
-    $partials = [
-        'head'          => file_get_contents($basePath . '/head.html'),
-        'tabla_sliders' => file_get_contents($basePath . '/tabla_sliders.html'),
-        'modal_crear'   => file_get_contents($basePath . '/modal_crear.html'),
-        'modal_editar'  => file_get_contents($basePath . '/modal_editar.html'),
-        'modal_detalle' => file_get_contents($basePath . '/modal_detalle.html'),
-        'scripts'       => file_get_contents($basePath . '/scripts.html'),
-    ];
-
-    echo (new Mustache)->render(
-        file_get_contents(VARPATH . '/public/admin/tab_slider/slider.html'),
-        $data,
-        $partials
-    );
+    require_once VARPATH . '/public/admin/tab_slider/inicio.php';
 });
 
 Flight::route('GET /slider/listar', function () {
+
     include DEFINITION;
     autentificar_administrador();
     
@@ -163,7 +127,11 @@ Flight::route('GET /slider/listar', function () {
     Flight::json($rows);
 });
 
+/* ==================================
+   🟢 CREAR SLIDER
+   ================================== */
 Flight::route('POST /slider/crear', function () {
+
     include DEFINITION;
     autentificar_administrador();
 
@@ -171,10 +139,10 @@ Flight::route('POST /slider/crear', function () {
     $is_visible     = $_POST['is_visible'] ?? 1;
     $fecha_creacion = $_POST['fecha_creacion'] ?? null;
     $fecha_fin      = $_POST['fecha_fin'] ?? null;
-    $grupo          = $_POST['grupo'] ?? null;
-    $descripcion    = $_POST['descripcion'] ?? '';
+    $grupo          = $_POST['grupo'] ?? '';
+    $descripcion = $_POST['descripcion'] ?? '';
 
-    $neg_id = $administrador_actual['neg_id'];
+    $neg_id = $administrador_actual['neg_id']; // 🔥
 
     if (empty($_FILES['img']['tmp_name'])) {
         Flight::json(['success' => false, 'error' => 'Imagen requerida']);
@@ -188,7 +156,7 @@ Flight::route('POST /slider/crear', function () {
         return;
     }
 
-    $filename = 'slider_' . date('Ymd_His') . '_' . rand(1000, 9999) . '.jpg';
+    $filename = 'slider_' . date('Ymd_His') . '_' . rand(1000,9999) . '.jpg';
 
     if (!bunnyUpload($jpgPath, $filename)) {
         Flight::json(['success' => false, 'error' => 'Error al subir imagen']);
@@ -215,7 +183,12 @@ Flight::route('POST /slider/crear', function () {
     ]);
 });
 
+
+/* ==================================
+   🟡 EDITAR SLIDER
+   ================================== */
 Flight::route('POST /slider/editar', function () {
+
     include DEFINITION;
     autentificar_administrador();
 
@@ -224,32 +197,27 @@ Flight::route('POST /slider/editar', function () {
     $is_visible     = $_POST['is_visible'] ?? 1;
     $fecha_creacion = $_POST['fecha_creacion'] ?? null;
     $fecha_fin      = $_POST['fecha_fin'] ?? null;
-    $grupo          = $_POST['grupo'] ?? null;
-    $descripcion    = $_POST['descripcion'] ?? '';
+    $grupo          = $_POST['grupo'] ?? '';
+    $descripcion = $_POST['descripcion'] ?? '';    
 
-    $neg_id = $administrador_actual['neg_id'];
+    $neg_id = $administrador_actual['neg_id']; // 🔥
 
     if (!$slider_id) {
         Flight::json(['success' => false, 'error' => 'slider_id requerido']);
         return;
     }    
 
-    $actual = DB::queryFirstRow(
-        "SELECT img FROM reg_slider WHERE slider_id = %i AND neg_id = %i",
-        $slider_id,
-        $neg_id
-    );
-
     $update = [
         'orden'          => $orden,
         'is_visible'     => $is_visible,
         'fecha_creacion' => $fecha_creacion,
         'fecha_fin'      => $fecha_fin,
-        'descripcion'    => $descripcion,
+        'descripcion'    => $descripcion, // 👈 NUEVO
         'grupo'          => $grupo
     ];
 
     if (!empty($_FILES['img']['tmp_name'])) {
+
         $jpgPath = resizeTo800Jpg($_FILES['img']['tmp_name']);
 
         if (!file_exists($jpgPath)) {
@@ -257,7 +225,7 @@ Flight::route('POST /slider/editar', function () {
             return;
         }
 
-        $filename = 'slider_' . date('Ymd_His') . '_' . rand(1000, 9999) . '.jpg';
+        $filename = 'slider_' . date('Ymd_His') . '_' . rand(1000,9999) . '.jpg';
 
         if (!bunnyUpload($jpgPath, $filename)) {
             Flight::json(['success' => false, 'error' => 'Error al subir imagen']);
@@ -265,8 +233,10 @@ Flight::route('POST /slider/editar', function () {
         }
 
         $rutaCompleta = rtrim(BUNNY_CDN_BASE, '/') . '/' . SLIDER_DIR . '/' . $filename;
+
         $update['img'] = $rutaCompleta;
 
+        // 🔥 eliminar anterior
         if (!empty($actual['img'])) {
             bunnyDelete($actual['img']);
         }
@@ -283,8 +253,11 @@ Flight::route('POST /slider/editar', function () {
     Flight::json(['success' => true]);
 });
 
+/* ELIMINAR */
 Flight::route('POST /slider/eliminar', function () {
+
     $d = json_decode(Flight::request()->getBody(), true);
+
     $slider_id = $d['slider_id'] ?? null;
 
     if (!$slider_id) {
@@ -292,6 +265,7 @@ Flight::route('POST /slider/eliminar', function () {
         return;
     }
 
+    // 🔥 Obtener imagen antes de borrar
     $row = DB::queryFirstRow(
         "SELECT img FROM reg_slider WHERE slider_id = %i",
         $slider_id
@@ -306,7 +280,9 @@ Flight::route('POST /slider/eliminar', function () {
     Flight::json(['success' => true]);
 });
 
+/* DETALLE */
 Flight::route('GET /slider/detalle/@id', function ($id) {
+
     include DEFINITION;
     autentificar_administrador();
 
@@ -321,8 +297,7 @@ Flight::route('GET /slider/detalle/@id', function ($id) {
             fecha_creacion,
             descripcion,            
             fecha_fin,
-            grupo,
-            neg_id
+            grupo
          FROM reg_slider
          WHERE slider_id = %i
          AND neg_id = %i",
@@ -334,6 +309,7 @@ Flight::route('GET /slider/detalle/@id', function ($id) {
 });
 
 Flight::route('POST /slider/ordenar', function () {
+
     include DEFINITION;
     autentificar_administrador();
 
@@ -347,7 +323,9 @@ Flight::route('POST /slider/ordenar', function () {
     DB::startTransaction();
 
     try {
+
         foreach ($data['orden'] as $item) {
+
             DB::update('reg_slider', [
                 'orden' => $item['orden']
             ], 'slider_id = %i',
@@ -356,6 +334,7 @@ Flight::route('POST /slider/ordenar', function () {
         }
 
         DB::commit();
+
         Flight::json(['success' => true]);
 
     } catch (Exception $e) {
@@ -364,93 +343,14 @@ Flight::route('POST /slider/ordenar', function () {
     }
 });
 
-Flight::route('POST /slider/actualizarVisible', function () {
-    include DEFINITION;
-    autentificar_administrador();
-
-    $d = json_decode(Flight::request()->getBody(), true);
-    $slider_id  = $d['slider_id'] ?? null;
-    $is_visible = isset($d['is_visible']) ? intval($d['is_visible']) : 0;
-    $neg_id     = $administrador_actual['neg_id'];
-
-    if (!$slider_id) {
-        Flight::json(['success' => false, 'error' => 'slider_id requerido']);
-        return;
-    }
-
-    DB::update(
-        'reg_slider',
-        ['is_visible' => $is_visible],
-        'slider_id = %i AND neg_id = %i',
-        $slider_id,
-        $neg_id
-    );
-
-    Flight::json(['success' => true]);
-});
-
-Flight::route('POST /slider/actualizarGrupo', function () {
-    include DEFINITION;
-    autentificar_administrador();
-
-    $d = json_decode(Flight::request()->getBody(), true);
-    $slider_id = $d['slider_id'] ?? null;
-    $grupo     = !empty($d['grupo']) ? $d['grupo'] : null;
-    $neg_id    = $administrador_actual['neg_id'];
-
-    if (!$slider_id) {
-        Flight::json(['success' => false, 'error' => 'slider_id requerido']);
-        return;
-    }
-
-    DB::update(
-        'reg_slider',
-        ['grupo' => $grupo],
-        'slider_id = %i AND neg_id = %i',
-        $slider_id,
-        $neg_id
-    );
-
-    Flight::json(['success' => true]);
-});
-
-Flight::route('POST /slider/actualizarUrlImg', function () {
-    include DEFINITION;
-    autentificar_administrador();
-
-    $d = json_decode(Flight::request()->getBody(), true);
-    $slider_id = $d['slider_id'] ?? null;
-    $img       = trim($d['img'] ?? '');
-    $neg_id    = $administrador_actual['neg_id'];
-
-    if (!$slider_id) {
-        Flight::json(['success' => false, 'error' => 'slider_id requerido']);
-        return;
-    }
-
-    if (empty($img)) {
-        Flight::json(['success' => false, 'error' => 'URL requerida']);
-        return;
-    }
-
-    DB::update(
-        'reg_slider',
-        ['img' => $img],
-        'slider_id = %i AND neg_id = %i',
-        $slider_id,
-        $neg_id
-    );
-
-    Flight::json(['success' => true, 'img' => $img]);
-});
-
 Flight::route('POST /slider/actualizarDescripcion', function () {
+
     include DEFINITION;
     autentificar_administrador();
 
     global $administrador_actual;
 
-    $slider_id   = $_POST['slider_id'] ?? null;
+    $slider_id  = $_POST['slider_id'] ?? null;
     $descripcion = $_POST['descripcion'] ?? '';
 
     $neg_id = $administrador_actual['neg_id'];
@@ -461,6 +361,7 @@ Flight::route('POST /slider/actualizarDescripcion', function () {
     }
 
     try {
+
         DB::query("
             UPDATE reg_slider
             SET descripcion = %s
@@ -474,9 +375,10 @@ Flight::route('POST /slider/actualizarDescripcion', function () {
         Flight::json(['success' => true]);
 
     } catch (Exception $e) {
+
         Flight::json([
             'success' => false,
-            'error'   => $e->getMessage()
+            'error' => $e->getMessage()
         ]);
     }
 });

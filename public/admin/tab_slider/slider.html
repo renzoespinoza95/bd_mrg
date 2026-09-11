@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  {{> head}}
+</head>
+<body>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      {{{menu_html}}}
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="appSlider" class="row-fluid">
+      <div class="span12">
+        <h2>{{title}}</h2>
+        {{> tabla_sliders}}
+        {{> modal_crear}}
+        {{> modal_editar}}
+        {{> modal_detalle}}
+      </div>
+    </div>
+    {{{footer_html}}}
+  </div>
+
+  {{> scripts}}
+</body>
+</html>

@@ -80,8 +80,6 @@ Flight::route('GET /', function () {
         ];
     }
 
-    
-    
     // TOPNAVBAR
     $rows = DB::query("
         SELECT i.item_pag_web_id, i.titulo, i.url_amigable
@@ -158,9 +156,7 @@ Flight::route('GET /item/@slug', function ($slug) {
     }
 
     $meta_description = vari('META_DESCRIPTION');
-
     $meta_keywords = vari('META_KEYWORDS');
-
     $titulo_pag_web = vari('TITULO_PAG_WEB');
 
     // Obtener celular dinámico del sistema y formatear para WhatsApp
@@ -211,7 +207,7 @@ Flight::route('GET /item/@slug', function ($slug) {
     // ITEM
     // =========================
     $item = DB::queryFirstRow("
-        SELECT titulo, contenido, subtitulo_detalle
+        SELECT titulo, contenido, subtitulo_detalle, html01, html02
         FROM reg_item_pag_web
         WHERE item_pag_web_id = %i
     ", $pag_web_id);
@@ -238,7 +234,6 @@ Flight::route('GET /item/@slug', function ($slug) {
             'url_img' => $r['url_img']
         ];
     }, $logotipos);
-
 
     $videos = DB::query("
         SELECT 
@@ -285,6 +280,8 @@ Flight::route('GET /item/@slug', function ($slug) {
     // =========================
     $data['titulo'] = $item['titulo'];
     $data['contenido'] = $item['contenido'];
+    $data['html01'] = $item['html01'] ?? '';
+    $data['html02'] = $item['html02'] ?? '';
 
     $texto = trim(strip_tags($item['subtitulo_detalle'] ?? ''));
 
@@ -328,9 +325,6 @@ Flight::route('GET /item/@slug', function ($slug) {
     $data['cliente'] = "MRG";
     $data['anio'] = 2026;
     $data['categoria'] = "METAL MECANICA - MINERIA";
-
-
-
 
     // =========================
     // RENDER
