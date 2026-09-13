@@ -23,6 +23,11 @@ const categoriaMethods = {
               .on('click', '.eliminar-cat', function () {
                 const id = $(this).data('id');
                 self.eliminarCategoria(id);
+              })
+              .on('change', '.chk-cat-visible', function () {
+                const id = $(this).data('id');
+                const isChecked = $(this).is(':checked') ? 1 : 0;
+                self.cambiarVisibleCategoria(id, isChecked);
               });
           }
 
@@ -32,11 +37,14 @@ const categoriaMethods = {
               ? `<img src="${c.url_img}" style="max-width: 60px; max-height: 40px; border-radius: 3px; object-fit: cover;">`
               : `<span class="muted" style="font-size: 11px;">Sin img</span>`;
 
+            const checkedHtml = (c.is_visible == 1) ? 'checked' : '';
+
             this.dtCat.row.add([
               c.cat_pag_web_id,
               vistaThumb,
               c.titulo,
               c.clave_txt || '',
+              `<div style="text-align:center;"><input type="checkbox" class="chk-cat-visible" data-id="${c.cat_pag_web_id}" ${checkedHtml} style="cursor:pointer;"></div>`,
               `
               <div class="btn-group">
                 <button class="btn btn-mini btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -58,16 +66,52 @@ const categoriaMethods = {
       .finally(() => desbloquearUI());
   },
 
+  cambiarVisibleCategoria(cat_id, is_visible) {
+    axios.post(`${this.apphost}/xoxo/reg_cat/actualizarVisible`, {
+      cat_pag_web_id: cat_id,
+      is_visible: is_visible
+    })
+    .then(res => {
+      if (res.data && res.data.status === 'ok') {
+        const c = this.categorias.find(x => x.cat_pag_web_id == cat_id);
+        if (c) c.is_visible = is_visible;
+      } else {
+        apprise('No se pudo actualizar la visibilidad');
+      }
+    })
+    .catch(() => apprise('Error de conexión'));
+  },
+
   abrirCrearCategoria() {
-    this.catForm = { titulo: '', clave_txt: '', url_img: '' };
+    this.catForm = { 
+      titulo: '', 
+      clave_txt: '', 
+      url_img: '', 
+      is_visible: 1, 
+      texto01: '', 
+      texto02: '' 
+    };
+
     $('#modalCategorias').modal('hide');
     $('#modalCrearCategoria').modal('show');
+
+    this.$nextTick(() => {
+      if ($('#txtCatTexto01').next('.note-editor').length) $('#txtCatTexto01').summernote('destroy');
+      if ($('#txtCatTexto02').next('.note-editor').length) $('#txtCatTexto02').summernote('destroy');
+
+      $('#txtCatTexto01').summernote({ height: 120 }).summernote('code', '');
+      $('#txtCatTexto02').summernote({ height: 120 }).summernote('code', '');
+    });
   },
 
   guardarCategoria() {
     if (!this.catForm.titulo) {
       return apprise('Escribe el título');
     }
+
+    this.catForm.texto01 = $('#txtCatTexto01').summernote('code');
+    this.catForm.texto02 = $('#txtCatTexto02').summernote('code');
+
     bloquearUI('Guardando categoría...');
     axios.post(`${this.apphost}/xoxo/reg_cat/crear`, this.catForm)
       .then(() => {
@@ -85,24 +129,41 @@ const categoriaMethods = {
       cat_pag_web_id: row.cat_pag_web_id,
       titulo: row.titulo,
       clave_txt: row.clave_txt || '',
-      url_img: row.url_img || ''
+      url_img: row.url_img || '',
+      is_visible: (row.is_visible !== undefined && row.is_visible !== null) ? Number(row.is_visible) : 1,
+      texto01: row.texto01 || '',
+      texto02: row.texto02 || ''
     };
+
     $('#modalCategorias').modal('hide');
-    setTimeout(() => {
-      $('#modalEditarCategoria').modal('show');
-    }, 200);
+    $('#modalEditarCategoria').modal('show');
+
+    this.$nextTick(() => {
+      if ($('#txtCatEditarTexto01').next('.note-editor').length) $('#txtCatEditarTexto01').summernote('destroy');
+      if ($('#txtCatEditarTexto02').next('.note-editor').length) $('#txtCatEditarTexto02').summernote('destroy');
+
+      $('#txtCatEditarTexto01').summernote({ height: 120 }).summernote('code', row.texto01 || '');
+      $('#txtCatEditarTexto02').summernote({ height: 120 }).summernote('code', row.texto02 || '');
+    });
   },
 
   actualizarCategoria() {
     if (!this.catForm.titulo) {
       return apprise('Escribe el título');
     }
+
+    this.catForm.texto01 = $('#txtCatEditarTexto01').summernote('code');
+    this.catForm.texto02 = $('#txtCatEditarTexto02').summernote('code');
+
     bloquearUI('Actualizando categoría...');
     axios.post(`${this.apphost}/xoxo/reg_cat/editar`, {
       cat_pag_web_id: this.catForm.cat_pag_web_id,
       titulo: this.catForm.titulo,
       clave_txt: this.catForm.clave_txt,
-      url_img: this.catForm.url_img
+      url_img: this.catForm.url_img,
+      is_visible: this.catForm.is_visible,
+      texto01: this.catForm.texto01,
+      texto02: this.catForm.texto02
     })
     .then(() => {
       $('#modalEditarCategoria').modal('hide');

@@ -1,9 +1,10 @@
-<!-- Imagen Principal del Producto y Galería -->
+<!-- Imagen Principal del Producto y Galería con apertura en Modal -->
 <div class="col-lg-4 col-md-6">
-  <div class="border p-2 bg-light shadow-sm rounded mb-2">
+  <div class="border p-2 bg-light shadow-sm rounded mb-2" style="cursor: pointer;" title="Clic para ampliar imagen">
     <img src="{{imagen_principal}}" 
          alt="{{titulo}}" 
-         class="img-fluid rounded w-100" 
+         class="img-fluid rounded w-100 btn-preview-img" 
+         data-img-src="{{imagen_principal}}"
          style="height: 310px; object-fit: cover;">
   </div>
 
@@ -11,7 +12,12 @@
   <div class="row g-2">
     {{#imagenes}}
     <div class="col-3">
-      <img src="{{url_img}}" class="img-thumbnail w-100" style="height: 60px; object-fit: cover;" alt="Miniatura">
+      <img src="{{url_img}}" 
+           class="img-thumbnail w-100 btn-preview-img" 
+           data-img-src="{{url_img}}" 
+           style="height: 60px; object-fit: cover; cursor: pointer;" 
+           alt="Miniatura" 
+           title="Clic para ampliar miniatura">
     </div>
     {{/imagenes}}
   </div>

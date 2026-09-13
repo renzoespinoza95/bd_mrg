@@ -2,7 +2,14 @@
 <div class="custom-breadcrumb mb-3 d-flex align-items-center gap-2">
   <a href="{{url_inicio}}"><i class="fa-solid fa-chevron-left"></i></a>
   <a href="{{url_inicio}}">INICIO</a> / 
-  <a href="javascript:void(0);">{{categoria}}</a> / 
+  <a href="javascript:void(0);" 
+     id="btnAbrirModalBreadcrumb" 
+     class="text-decoration-underline" 
+     style="color: var(--mrg-blue); cursor: pointer;"
+     data-title="{{categoria}}"
+     data-subcats-b64="{{cat_subcategorias_base64}}">
+    {{categoria}}
+  </a> / 
   <span>{{titulo}}</span>
 </div>
 

@@ -8,31 +8,21 @@
   <base href="{{base}}">
   <link rel="icon" type="image/png" href="{{favicon}}">
 
-  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+  <!-- Open Graph -->
   <meta property="og:type" content="article">
   <meta property="og:title" content="{{titulo}} - {{title}}">
   <meta property="og:description" content="{{meta_description}}">
   <meta property="og:image" content="https://barsi-img.b-cdn.net/t_mrg/1fta7k.jpg">
-  <meta property="og:image:secure_url" content="https://barsi-img.b-cdn.net/t_mrg/1fta7k.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="{{url_inicio}}">
   <meta property="og:site_name" content="MRG Asesoramiento y Reparaciones">
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{titulo}} - {{title}}">
-  <meta name="twitter:description" content="{{meta_description}}">
-  <meta name="twitter:image" content="https://barsi-img.b-cdn.net/t_mrg/1fta7k.jpg">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Bootstrap 5 CSS -->
+  <!-- Bootstrap 5 CSS & Font Awesome 6 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome 6 -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 
   <style>
@@ -372,6 +362,87 @@
       color: var(--mrg-blue);
       text-decoration: none;
       font-weight: 600;
+    }
+
+    /* ========================================================= */
+    /* 🔥 ESTILOS DEL MODAL DESLIZANTE DE SUBCATEGORÍAS (2da imagen) */
+    /* ========================================================= */
+    .slider-modal-container {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      min-height: 380px;
+    }
+    .slider-modal-track {
+      display: flex;
+      width: 200%;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .slider-modal-panel {
+      width: 50%;
+      padding: 10px 5px;
+      box-sizing: border-box;
+    }
+    .slider-modal-track.slide-right {
+      transform: translateX(-50%);
+    }
+
+    .subcat-list-item {
+      background: #ffffff;
+      border: 1.5px solid #dce4f2;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.25s ease;
+      font-weight: 700;
+      color: var(--mrg-blue);
+      box-shadow: 0 2px 5px rgba(36, 40, 120, 0.04);
+    }
+    .subcat-list-item:hover {
+      background: #f0f4ff;
+      border-color: var(--mrg-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(36, 40, 120, 0.12);
+    }
+    .subcat-list-item .badge {
+      background-color: var(--mrg-gold) !important;
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 50px;
+    }
+
+    .product-list-card {
+      border: 1px solid #e6e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      background: #fff;
+    }
+    .product-list-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(36,40,120,0.12);
+      border-color: var(--mrg-gold);
+    }
+    .product-list-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+    .product-list-card h6 {
+      font-family: var(--font-titles);
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      color: var(--mrg-blue);
+      margin: 8px 10px 10px;
     }
   </style>
 </head>

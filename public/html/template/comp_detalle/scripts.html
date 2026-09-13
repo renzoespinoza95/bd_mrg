@@ -1,11 +1,11 @@
 <!-- Bootstrap 5 Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Efecto Hover Dinámico para Cards -->
+<!-- Efecto Hover Dinámico, Modal Categoría en Breadcrumb y Visor de Imágenes -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // 1. Hover en tarjetas con data-text
     const interactiveTiles = document.querySelectorAll('.tile-card[data-text]');
-
     interactiveTiles.forEach(tile => {
       const overlay = tile.querySelector('.tile-overlay');
       const textField = overlay.querySelector('.overlay-text');
@@ -24,5 +24,113 @@
         overlay.classList.remove('is-active');
       });
     });
+
+    // 2. Modal de Imágenes (Principal y Miniaturas vía modal_preview_img)
+    const modalImgEl = document.getElementById('modalVerImagen');
+    if (modalImgEl) {
+      const modalImgInstance = new bootstrap.Modal(modalImgEl);
+      const imgTarget = document.getElementById('imgModalPreview');
+
+      document.querySelectorAll('.btn-preview-img').forEach(img => {
+        img.addEventListener('click', () => {
+          const src = img.getAttribute('data-img-src') || img.getAttribute('src');
+          if (src) {
+            imgTarget.setAttribute('src', src);
+            modalImgInstance.show();
+          }
+        });
+      });
+    }
+
+    // 3. Modal Deslizante activado desde el Breadcrumb (Estilo 2da imagen)
+    const modalElement = document.getElementById('modalCategoriasMRG');
+    const btnBreadcrumb = document.getElementById('btnAbrirModalBreadcrumb');
+
+    if (modalElement && btnBreadcrumb) {
+      const modalBootstrap = new bootstrap.Modal(modalElement);
+      const modalTitle = document.getElementById('modalCatTitle');
+      const sliderTrack = document.getElementById('sliderModalTrack');
+      const btnVolver = document.getElementById('btnVolverSubcats');
+      const contSubcats = document.getElementById('contenedorListaSubcats');
+      const contProductos = document.getElementById('contenedorListaProductos');
+      const txtSubcatSel = document.getElementById('txtSubcatSeleccionada');
+      const txtTotalItems = document.getElementById('txtTotalItems');
+
+      let categoriaTitulo = btnBreadcrumb.getAttribute('data-title') || 'CATEGORÍA';
+
+      btnBreadcrumb.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        let subcatsData = [];
+        const rawB64 = btnBreadcrumb.getAttribute('data-subcats-b64');
+        if (rawB64) {
+          try {
+            const jsonString = decodeURIComponent(escape(atob(rawB64)));
+            subcatsData = JSON.parse(jsonString);
+          } catch (err) {
+            console.error('Error al decodificar subcategorías:', err);
+            subcatsData = [];
+          }
+        }
+
+        sliderTrack.classList.remove('slide-right');
+        btnVolver.classList.add('d-none');
+        modalTitle.textContent = categoriaTitulo.toUpperCase() + ' - SUBCATEGORÍAS';
+
+        contSubcats.innerHTML = '';
+        if (subcatsData.length === 0) {
+          contSubcats.innerHTML = '<div class="alert alert-warning text-center">No hay subcategorías registradas en este momento.</div>';
+        } else {
+          subcatsData.forEach(sub => {
+            const div = document.createElement('div');
+            div.className = 'subcat-list-item';
+            div.innerHTML = `
+              <span>${sub.titulo}</span>
+              <span class="badge">${sub.total_productos} ítems <i class="fa-solid fa-chevron-right ms-1 fa-2xs"></i></span>
+            `;
+
+            div.addEventListener('click', () => {
+              mostrarProductosDeSubcat(sub);
+            });
+
+            contSubcats.appendChild(div);
+          });
+        }
+
+        modalBootstrap.show();
+      });
+
+      function mostrarProductosDeSubcat(sub) {
+        txtSubcatSel.textContent = sub.titulo;
+        txtTotalItems.textContent = `${sub.total_productos} disponibles`;
+        contProductos.innerHTML = '';
+
+        if (sub.productos.length === 0) {
+          contProductos.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">No hay productos registrados en esta subcategoría.</div></div>';
+        } else {
+          sub.productos.forEach(prod => {
+            const col = document.createElement('div');
+            col.className = 'col-6 col-md-4';
+            col.innerHTML = `
+              <a href="${prod.url}" class="product-list-card">
+                <img src="${prod.img}" alt="${prod.titulo}">
+                <h6>${prod.titulo}</h6>
+              </a>
+            `;
+            contProductos.appendChild(col);
+          });
+        }
+
+        sliderTrack.classList.add('slide-right');
+        btnVolver.classList.remove('d-none');
+        modalTitle.textContent = sub.titulo.toUpperCase();
+      }
+
+      btnVolver.addEventListener('click', () => {
+        sliderTrack.classList.remove('slide-right');
+        btnVolver.classList.add('d-none');
+        modalTitle.textContent = categoriaTitulo.toUpperCase() + ' - SUBCATEGORÍAS';
+      });
+    }
   });
-</script> 
+</script>

@@ -10,13 +10,12 @@
       <div class="tile-card"
            data-catid="{{cat_id}}"
            data-title="{{titulo}}" 
-           data-text="{{descripcion}}"
            data-subcats-b64="{{subcategorias_base64}}">
         <div class="tile-header">{{titulo}} <i class="fa-solid fa-plus"></i></div>
         <img src="{{url_img}}" alt="{{titulo}}">
         <div class="tile-overlay">
           <div class="overlay-title"><span>{{titulo}}</span> <i class="fa-solid fa-plus"></i></div>
-          <p class="overlay-text">{{descripcion}}</p>
+          <div class="overlay-text">{{{descripcion}}}</div>
           <button type="button" class="btn-cat-pill w-100 btn-abrir-modal-cat">
             <span class="pill-text">EXPLORAR</span>
             <span class="pill-circle"><i class="fa-solid fa-arrow-right fa-xs"></i></span>

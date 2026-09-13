@@ -1,9 +1,12 @@
 const pagWebState = {
   apphost: (typeof window.apphost !== 'undefined' ? window.apphost : ''),
   
-  // 🔥 Selección actual de columnas jerárquicas
+  // 🔥 Selección actual de columnas jerárquicas de la vista principal
   catSeleccionada: null,
   subcatSeleccionada: null,
+
+  // 🔥 Filtro de categoría en el panel izquierdo del modal de subcategorías
+  catModalSubcatFiltro: null,
 
   videoFormEditar: {
     pag_item_vid_id: null,
@@ -30,7 +33,11 @@ const pagWebState = {
   catForm: {
     cat_pag_web_id: null,
     titulo: '',
-    clave_txt: ''
+    clave_txt: '',
+    url_img: '',
+    is_visible: 1,
+    texto01: '',
+    texto02: ''
   },
   videoForm: {
     titulo: '',
@@ -41,6 +48,10 @@ const pagWebState = {
     subcat_pag_web_id: null,
     titulo: '',
     clave_txt: '',
+    url_img: '',
+    is_visible: 1,
+    texto01: '',
+    texto02: '',
     cat: null
   },
   imagenes: [],

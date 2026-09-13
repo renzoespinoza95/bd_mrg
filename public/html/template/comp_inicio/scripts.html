@@ -10,7 +10,7 @@
     firstSlide.classList.add('active');
   }
 
-  // 2. Efecto Hover dinámico en las tarjetas 1:1
+  // 2. Efecto Hover dinámico en las tarjetas 1:1 (preserva el HTML renderizado)
   const interactiveTiles = document.querySelectorAll('.tile-card');
   interactiveTiles.forEach(tile => {
     const overlay = tile.querySelector('.tile-overlay');
@@ -75,7 +75,7 @@
             div.className = 'subcat-list-item';
             div.innerHTML = `
               <span>${sub.titulo}</span>
-              <span class="badge rounded-pill">${sub.total_productos} ítems <i class="fa-solid fa-chevron-right ms-1 fa-2xs"></i></span>
+              <span class="badge">${sub.total_productos} ítems <i class="fa-solid fa-chevron-right ms-1 fa-2xs"></i></span>
             `;
 
             // Al hacer clic en una subcategoría: animar hacia la derecha y listar ítems
@@ -91,7 +91,7 @@
       });
     });
 
-    // Función que carga los productos y desplaza el contenedor a la derecha
+    // Función que carga los productos y desplaza el contenedor a la derecha (sin precio)
     function mostrarProductosDeSubcat(sub) {
       txtSubcatSel.textContent = sub.titulo;
       txtTotalItems.textContent = `${sub.total_productos} disponibles`;
@@ -107,7 +107,6 @@
             <a href="${prod.url}" class="product-list-card">
               <img src="${prod.img}" alt="${prod.titulo}">
               <h6>${prod.titulo}</h6>
-              <div class="price-tag">S/ ${prod.precio}</div>
             </a>
           `;
           contProductos.appendChild(col);

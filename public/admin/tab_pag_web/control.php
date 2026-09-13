@@ -177,9 +177,12 @@ Flight::route('GET /xoxo/reg_cat/listar', function(){
             cat_pag_web_id,
             titulo,
             clave_txt,
-            url_img
+            url_img,
+            is_visible,
+            texto01,
+            texto02
         FROM reg_cat_pag_web
-        ORDER BY orden
+        ORDER BY orden ASC, cat_pag_web_id DESC
     ");
     Flight::json(['status'=>'ok','data'=>$rows]);
 });
@@ -191,10 +194,13 @@ Flight::route('POST /xoxo/reg_cat/crear', function(){
     $d = Flight::request()->data->getData();
 
     DB::insert('reg_cat_pag_web',[
-        'titulo'    => $d['titulo'],
-        'clave_txt' => $d['clave_txt'] ?? '',
-        'url_img'   => $d['url_img'] ?? '',
-        'neg_id'    => $administrador_actual['neg_id']
+        'titulo'     => $d['titulo'],
+        'clave_txt'  => $d['clave_txt'] ?? '',
+        'url_img'    => $d['url_img'] ?? '',
+        'is_visible' => isset($d['is_visible']) ? (int)$d['is_visible'] : 1,
+        'texto01'    => $d['texto01'] ?? '',
+        'texto02'    => $d['texto02'] ?? '',
+        'neg_id'     => $administrador_actual['neg_id']
     ]);
 
     Flight::json(['status'=>'ok']);
@@ -204,10 +210,30 @@ Flight::route('POST /xoxo/reg_cat/editar', function(){
     $d = Flight::request()->data->getData();
 
     DB::update('reg_cat_pag_web',[
-        'titulo'    => $d['titulo'],
-        'clave_txt' => $d['clave_txt'] ?? '',
-        'url_img'   => $d['url_img'] ?? ''
+        'titulo'     => $d['titulo'],
+        'clave_txt'  => $d['clave_txt'] ?? '',
+        'url_img'    => $d['url_img'] ?? '',
+        'is_visible' => isset($d['is_visible']) ? (int)$d['is_visible'] : 1,
+        'texto01'    => $d['texto01'] ?? '',
+        'texto02'    => $d['texto02'] ?? ''
     ],"cat_pag_web_id=%i", $d['cat_pag_web_id']);
+
+    Flight::json(['status'=>'ok']);
+});
+
+Flight::route('POST /xoxo/reg_cat/actualizarVisible', function(){
+    $d = json_decode(Flight::request()->getBody(), true);
+    $cat_id     = $d['cat_pag_web_id'] ?? null;
+    $is_visible = isset($d['is_visible']) ? (int)$d['is_visible'] : 0;
+
+    if (!$cat_id) {
+        Flight::json(['status'=>'error','msg'=>'ID requerido']);
+        return;
+    }
+
+    DB::update('reg_cat_pag_web', [
+        'is_visible' => $is_visible
+    ], "cat_pag_web_id=%i", $cat_id);
 
     Flight::json(['status'=>'ok']);
 });
@@ -245,6 +271,9 @@ Flight::route('POST /xoxo/reg_subcat/crear', function(){
         'titulo'         => $d['titulo'],
         'clave_txt'      => $d['clave_txt'] ?? '',
         'url_img'        => $d['url_img'] ?? '',
+        'is_visible'     => isset($d['is_visible']) ? (int)$d['is_visible'] : 1,
+        'texto01'        => $d['texto01'] ?? '',
+        'texto02'        => $d['texto02'] ?? '',
         'cat_pag_web_id' => $d['cat_id']
     ]);
 
@@ -258,8 +287,28 @@ Flight::route('POST /xoxo/reg_subcat/editar', function(){
         'titulo'         => $d['titulo'],
         'cat_pag_web_id' => $d['cat_id'],
         'clave_txt'      => $d['clave_txt'] ?? '',
-        'url_img'        => $d['url_img'] ?? ''
+        'url_img'        => $d['url_img'] ?? '',
+        'is_visible'     => isset($d['is_visible']) ? (int)$d['is_visible'] : 1,
+        'texto01'        => $d['texto01'] ?? '',
+        'texto02'        => $d['texto02'] ?? ''
     ],"subcat_pag_web_id=%i", $d['subcat_pag_web_id']);
+
+    Flight::json(['status'=>'ok']);
+});
+
+Flight::route('POST /xoxo/reg_subcat/actualizarVisible', function(){
+    $d = json_decode(Flight::request()->getBody(), true);
+    $subcat_id  = $d['subcat_pag_web_id'] ?? null;
+    $is_visible = isset($d['is_visible']) ? (int)$d['is_visible'] : 0;
+
+    if (!$subcat_id) {
+        Flight::json(['status'=>'error','msg'=>'ID requerido']);
+        return;
+    }
+
+    DB::update('reg_subcat_pag_web', [
+        'is_visible' => $is_visible
+    ], "subcat_pag_web_id=%i", $subcat_id);
 
     Flight::json(['status'=>'ok']);
 });
