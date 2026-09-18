@@ -87,7 +87,7 @@ Flight::route('GET /slider/inicio', function () {
     ob_start();
     perso::vuejs2();
     perso::vue_select();
-    perso::start();
+    perso::start($version);
     perso::favicon();
     perso::font_awesome();
     perso::jquery2();

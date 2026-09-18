@@ -1,11 +1,11 @@
 const pagWebState = {
   apphost: (typeof window.apphost !== 'undefined' ? window.apphost : ''),
   
-  // 🔥 Selección actual de columnas jerárquicas de la vista principal
+  // Selección actual de columnas jerárquicas de la vista principal
   catSeleccionada: null,
   subcatSeleccionada: null,
 
-  // 🔥 Filtro de categoría en el panel izquierdo del modal de subcategorías
+  // Filtro de categoría en el panel izquierdo del modal de subcategorías
   catModalSubcatFiltro: null,
 
   videoFormEditar: {
@@ -24,6 +24,7 @@ const pagWebState = {
     subtitulo_detalle: '',
     html01: '',
     html02: '',
+    is_visible: 1,
     stock: 0,
     clave_txt: '',
     contenido: '',

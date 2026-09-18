@@ -18,6 +18,9 @@ Flight::route('GET /', function () {
     $mensaje_ws = urlencode("Estimados MRG, me comunico a través de su página web oficial para solicitar mayor información técnica y cotización sobre sus servicios especializados.");
     $url_whatsapp = 'https://wa.me/' . $celular_limpio . '?text=' . $mensaje_ws;
 
+    // 🔥 OBTENER DATOS DE CONTACTO MEDIANTE LA FUNCIÓN ESTÁTICA
+    $TXT_ATENCION_COM01 = perso::clave_txt('TXT_ATENCION_COM01');
+
     // 🔥 SLIDERS
     $sliders = DB::query("
         SELECT slider_id, img, orden, descripcion, titulo_superior
@@ -105,7 +108,9 @@ Flight::route('GET /', function () {
         'url_inicio' => $apphost,
         'visitas' => $mis_visitas,
         'categorias' => $categorias,
-        'sliders' => $sliders
+        'sliders' => $sliders,
+        'atencion_com_titulo'    => $TXT_ATENCION_COM01['titulo'] ?? 'Atención Comercial y Emergencias',
+        'atencion_com_contenido' => $TXT_ATENCION_COM01['contenido'] ?? "Tlf: {$celular}<br>contacto@mrg.com.pe<p class='mb-0'>Horario: Lun - Sáb 08:00 a 18:00</p>"
     ];
 
     $data['celular'] = $celular;
@@ -119,7 +124,7 @@ Flight::route('GET /', function () {
         return ['titulo' => $r['titulo'], 'url' => $apphost . '/item/' . $r['item_pag_web_id'] . '-' . $r['url_amigable']];
     }, $right);
 
-    // Directorio renombrado a comp_inicio
+    // Componentes parciales
     $partials = [
         'head'       => file_get_contents(VARPATH . '/public/html/template/comp_inicio/head.html'),
         'header'     => file_get_contents(VARPATH . '/public/html/template/comp_inicio/header.html'),
@@ -266,21 +271,23 @@ Flight::route('GET /item/@slug', function ($slug) {
     $data['categoria'] = $item['cat_titulo'];
     $data['cat_subcategorias_base64'] = base64_encode(json_encode($subcats_categoria, JSON_UNESCAPED_UNICODE));
 
-    // LOGOTIPOS
-    $logotipos = DB::query("
-        SELECT img.url_img
+    // 🔥 CONVENIO Y LOGOTIPOS (1ra imagen de clave_txt = TXT_CONVENIO01 y su html02)
+    $item_convenio = DB::queryFirstRow("
+        SELECT 
+            i.item_pag_web_id,
+            i.titulo,
+            i.html02,
+            (SELECT img.url_img FROM reg_pag_item_img img WHERE img.item_pag_web_id = i.item_pag_web_id ORDER BY img.orden ASC LIMIT 1) AS primera_img
         FROM reg_item_pag_web i
-        INNER JOIN reg_pag_item_img img 
-            ON img.item_pag_web_id = i.item_pag_web_id
         WHERE i.clave_txt = %s
-        ORDER BY img.orden ASC
-    ", 'TXT_LOGOTIPOS');
+        LIMIT 1
+    ", 'TXT_CONVENIO01');
 
-    $data['logotipos'] = array_map(function($r){
-        return [
-            'url_img' => $r['url_img']
-        ];
-    }, $logotipos);
+    $data['convenio'] = [
+        'titulo'   => $item_convenio['titulo'] ?? 'CONVENIO',
+        'url_img'  => $item_convenio['primera_img'] ?? 'assets/logo-mrg.jpg',
+        'html02'   => $item_convenio['html02'] ?? 'Alianza estratégica homologada.'
+    ];
 
     // IMAGENES
     $imagenes = DB::query("

@@ -4,24 +4,31 @@
 <!-- Efecto Hover Dinámico, Modal Categoría en Breadcrumb y Visor de Imágenes -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // 1. Hover en tarjetas con data-text
-    const interactiveTiles = document.querySelectorAll('.tile-card[data-text]');
+    // 1. Hover en tarjetas (soporta data-text y data-html de html02)
+    const interactiveTiles = document.querySelectorAll('.tile-card');
     interactiveTiles.forEach(tile => {
       const overlay = tile.querySelector('.tile-overlay');
-      const textField = overlay.querySelector('.overlay-text');
+      const textField = overlay ? overlay.querySelector('.overlay-text') : null;
+
+      const htmlContent = tile.getAttribute('data-html');
+      const textContent = tile.getAttribute('data-text');
 
       if (textField) {
-        textField.textContent = tile.getAttribute('data-text');
+        if (htmlContent) {
+          textField.innerHTML = htmlContent;
+        } else if (textContent) {
+          textField.textContent = textContent;
+        }
       }
 
       tile.addEventListener('mouseenter', () => {
         tile.classList.add('is-active');
-        overlay.classList.add('is-active');
+        if (overlay) overlay.classList.add('is-active');
       });
 
       tile.addEventListener('mouseleave', () => {
         tile.classList.remove('is-active');
-        overlay.classList.remove('is-active');
+        if (overlay) overlay.classList.remove('is-active');
       });
     });
 
@@ -108,7 +115,8 @@
         if (sub.productos.length === 0) {
           contProductos.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">No hay productos registrados en esta subcategoría.</div></div>';
         } else {
-          sub.productos.forEach(prod => {
+          subproductos = sub.productos;
+          subproductos.forEach(prod => {
             const col = document.createElement('div');
             col.className = 'col-6 col-md-4';
             col.innerHTML = `

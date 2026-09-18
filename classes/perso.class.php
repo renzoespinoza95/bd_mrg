@@ -10,15 +10,12 @@ class perso {
       self::$varhost = $varhost;
   }
   
-  public static function start() {
+  public static function start($version = null) {
   
-  com("Bootstrap");
-  echo "<link href='" . self::$boot . "/assets/css/bootstrap2.css' rel='stylesheet'>";
-  n();
-  
-  echo "<link href='" . self::$boot . "/assets/css/bootstrap-responsive.css' rel='stylesheet'>";
-  n();    
-    
+  com("Bootstrap");    
+  css(self::$boot . "/assets/css/bootstrap2.css?version=" . $version);
+  css(self::$boot . "/assets/css/bootstrap-responsive.css?version=" . $version);
+
   }
   
   
@@ -230,6 +227,17 @@ public static function mostrar_palabra_latina($texto) {
     }
     return iconv("CP1252", "UTF-8", $texto);
 }
+
+public static function clave_txt($clave) {
+        return DB::queryFirstRow("
+            SELECT
+                titulo,
+                contenido
+            FROM reg_item_pag_web
+            WHERE clave_txt = %s
+            LIMIT 1
+        ", $clave);
+    }
   
 // +++++++++++++
 // | END PERSO |

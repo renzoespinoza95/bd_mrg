@@ -1,5 +1,4 @@
 const itemMethods = {
-  // Carga inicial completa de categorías, subcategorías e ítems
   cargarTodo() {
     bloquearUI('Cargando catálogo...');
     Promise.all([
@@ -12,7 +11,6 @@ const itemMethods = {
       this.subcategorias = subcatRes.data.data || [];
       this.items = itemRes.data.data || [];
 
-      // Seleccionar automáticamente la primera categoría si existe
       if (this.categorias.length > 0 && !this.catSeleccionada) {
         this.seleccionarCategoria(this.categorias[0]);
       } else if (this.subcatSeleccionada) {
@@ -46,6 +44,22 @@ const itemMethods = {
     return this.items.filter(i => i.subcat_pag_web_id == subcat_id).length;
   },
 
+  cambiarVisibleItem(item_id, is_visible) {
+    axios.post(`${this.apphost}/xoxo/reg_item/actualizarVisible`, {
+      item_pag_web_id: item_id,
+      is_visible: is_visible
+    })
+    .then(res => {
+      if (res.data && res.data.status === 'ok') {
+        const it = this.items.find(x => x.item_pag_web_id == item_id);
+        if (it) it.is_visible = is_visible;
+      } else {
+        apprise('No se pudo actualizar la visibilidad del ítem');
+      }
+    })
+    .catch(() => apprise('Error de conexión'));
+  },
+
   filtrarTablaPorSubcat() {
     this.$nextTick(() => {
       if (!this.dt) {
@@ -53,7 +67,8 @@ const itemMethods = {
           language: (typeof dt_language !== 'undefined' ? dt_language : undefined),
           scrollX: true,
           dom: 'frtip',
-          order: [[0, 'desc']]
+          order: [[0, 'desc']],
+          stripeClasses: []
         });
 
         const self = this;
@@ -74,6 +89,11 @@ const itemMethods = {
           .on('click', '.vid', function () {
             self.itemActual = $(this).data('id');
             self.verVideos(self.itemActual);
+          })
+          .on('change', '.chk-item-visible', function () {
+            const id = $(this).data('id');
+            const isChecked = $(this).is(':checked') ? 1 : 0;
+            self.cambiarVisibleItem(id, isChecked);
           });
       }
 
@@ -84,11 +104,14 @@ const itemMethods = {
         : [];
 
       itemsFiltrados.forEach(i => {
+        const checkedHtml = (i.is_visible == 1 || i.is_visible === undefined) ? 'checked' : '';
+
         this.dt.row.add([
           i.item_pag_web_id,
           i.titulo,
           i.precio,
           i.stock,
+          `<div style="text-align:center;"><input type="checkbox" class="chk-item-visible" data-id="${i.item_pag_web_id}" ${checkedHtml} style="cursor:pointer;"></div>`,
           `
           <div class="btn-group">
             <button class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
@@ -120,6 +143,7 @@ const itemMethods = {
       subtitulo_detalle: '',
       html01: '',
       html02: '',
+      is_visible: 1,
       clave_txt: '',
       cat: this.catSeleccionada,
       subcat: this.subcatSeleccionada
@@ -150,6 +174,7 @@ const itemMethods = {
       subtitulo_detalle: '',
       html01: '',
       html02: '',
+      is_visible: 1,
       clave_txt: '',
       cat: this.catSeleccionada || null,
       subcat: this.subcatSeleccionada || null
@@ -181,6 +206,7 @@ const itemMethods = {
       subtitulo_detalle: row.subtitulo_detalle || '',
       html01: row.html01 || '',
       html02: row.html02 || '',
+      is_visible: (row.is_visible !== undefined && row.is_visible !== null) ? Number(row.is_visible) : 1,
       cat: null,
       subcat: null
     };
@@ -237,11 +263,12 @@ const itemMethods = {
       subtitulo_detalle: this.itemForm.subtitulo_detalle,
       html01: this.itemForm.html01,
       html02: this.itemForm.html02,
+      is_visible: this.itemForm.is_visible,
       subcat_id: this.itemForm.subcat?.subcat_pag_web_id || null
     })
     .then(() => {
       $('#modalItem').modal('hide');
-      this.cargarTodo();
+      this.cargarTodo(); // Corregido: antes llamaba a this.listar()
     })
     .finally(() => desbloquearUI());
   },

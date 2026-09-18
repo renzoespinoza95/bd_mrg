@@ -2142,11 +2142,6 @@ table {
   -moz-border-radius-topright: 4px;
 }
 
-.table-striped tbody > tr:nth-child(odd) > td,
-.table-striped tbody > tr:nth-child(odd) > th {
-  background-color: #45515f;
-}
-
 .table-hover tbody tr:hover > td,
 .table-hover tbody tr:hover > th {
   background-color: #505e6e;
