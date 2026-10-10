@@ -99,29 +99,3 @@ Flight::route('POST /xoxo/reg_img/crear_url', function(){
 
     Flight::json(['status'=>'ok']);
 });
-
-// 20. Eliminar Imagen
-Flight::route('POST /xoxo/reg_img/eliminar', function(){
-    include DEFINITION;
-    autentificar_administrador();
-
-    $d = Flight::request()->data->getData();
-    $id = $d['id'] ?? null;
-
-    if (!$id) {
-        Flight::json(['status'=>'error']);
-        return;
-    }
-
-    $row = DB::queryFirstRow(
-        "SELECT url_img FROM reg_pag_item_img WHERE pag_item_img_id=%i",
-        $id
-    );
-
-    if ($row && !empty($row['url_img'])) {
-        bunnyDelete($row['url_img']);
-    }
-
-    DB::delete('reg_pag_item_img', "pag_item_img_id=%i", $id);
-    Flight::json(['status'=>'ok']);
-});
