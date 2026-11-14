@@ -60,7 +60,7 @@ Flight::route('GET /', function () {
                 return [
                     'item_pag_web_id' => $it['item_pag_web_id'],
                     'titulo' => $it['titulo'],
-                    'img' => $it['img'] ?: 'assets/logo-mrg.jpg',
+                    'img' => $it['img'] ?: 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg',
                     'url' => $apphost . '/item/' . $it['item_pag_web_id'] . '-' . $it['url_amigable']
                 ];
             }, $items_raw);
@@ -252,7 +252,7 @@ Flight::route('GET /item/@slug', function ($slug) {
                 return [
                     'item_pag_web_id' => $it['item_pag_web_id'],
                     'titulo' => $it['titulo'],
-                    'img' => $it['img'] ?: 'assets/logo-mrg.jpg',
+                    'img' => $it['img'] ?: 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg',
                     'url' => $apphost . '/item/' . $it['item_pag_web_id'] . '-' . $it['url_amigable']
                 ];
             }, $items_raw);
@@ -297,7 +297,7 @@ Flight::route('GET /item/@slug', function ($slug) {
         ORDER BY orden ASC
     ", $pag_web_id);
 
-    $data['logo'] = 'assets/main-logo.png';
+    $data['logo'] = 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg';
     $data['title'] = $item['titulo'];
     $data['favicon'] = $varhost . '/public/ico/favicon.png';
     $data['base'] = $base;
