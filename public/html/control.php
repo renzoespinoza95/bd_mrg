@@ -271,12 +271,11 @@ Flight::route('GET /item/@slug', function ($slug) {
     $data['categoria'] = $item['cat_titulo'];
     $data['cat_subcategorias_base64'] = base64_encode(json_encode($subcats_categoria, JSON_UNESCAPED_UNICODE));
 
-    // 🔥 CONVENIO Y LOGOTIPOS (Obtener todas las imágenes de clave_txt = TXT_CONVENIO01)
+    // 🔥 OBTENER TODAS LAS IMÁGENES DEL CONVENIO (TXT_CONVENIO01)
     $item_convenio = DB::queryFirstRow("
         SELECT 
             i.item_pag_web_id,
-            i.titulo,
-            i.html02
+            i.titulo
         FROM reg_item_pag_web i
         WHERE i.clave_txt = %s
         LIMIT 1
@@ -299,21 +298,10 @@ Flight::route('GET /item/@slug', function ($slug) {
         }
     }
 
-    // Si no hay imágenes en la tabla relacional, usar la estructura por defecto con una sola imagen
     if (empty($convenio_imagenes)) {
-        $item_conv_single = DB::queryFirstRow("
-            SELECT 
-                i.titulo,
-                i.html02,
-                (SELECT img.url_img FROM reg_pag_item_img img WHERE img.item_pag_web_id = i.item_pag_web_id ORDER BY img.orden ASC LIMIT 1) AS primera_img
-            FROM reg_item_pag_web i
-            WHERE i.clave_txt = %s
-            LIMIT 1
-        ", 'TXT_CONVENIO01');
-
         $convenio_imagenes[] = [
-            'titulo'  => $item_conv_single['titulo'] ?? 'CONVENIO',
-            'url_img' => $item_conv_single['primera_img'] ?? 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg'
+            'titulo'  => 'CONVENIO',
+            'url_img' => 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg'
         ];
     }
 
