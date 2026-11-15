@@ -77,7 +77,7 @@ Flight::route('GET /', function () {
         $categorias[] = [
             'cat_id' => $c['cat_pag_web_id'],
             'titulo' => $c['titulo'],
-            'url_img' => $c['url_img'] ?: 'assets/logo-mrg.jpg',
+            'url_img' => $c['url_img'] ?: 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg',
             'descripcion' => $c['texto01'] ?: 'Línea especializada de ingeniería y servicios.',
             'subcategorias_base64' => base64_encode(json_encode($subcategorias, JSON_UNESCAPED_UNICODE))
         ];
@@ -97,9 +97,9 @@ Flight::route('GET /', function () {
     $right = array_slice($rows, 3, 3);
 
     $data = [
-        'logo' => 'assets/logo-mrg.jpg',
+        'logo' => 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg',
         'title' => 'MRG ASESORAMIENTO Y REPARACIONES',
-        'favicon' => $varhost . '/public/ico/favicon.png',
+        'favicon' => 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg',
         'base' => $base,
         'version' => $version,
         'meta_description' => $meta_description,
@@ -285,7 +285,7 @@ Flight::route('GET /item/@slug', function ($slug) {
 
     $data['convenio'] = [
         'titulo'   => $item_convenio['titulo'] ?? 'CONVENIO',
-        'url_img'  => $item_convenio['primera_img'] ?? 'assets/logo-mrg.jpg',
+        'url_img'  => $item_convenio['primera_img'] ?? 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg',
         'html02'   => $item_convenio['html02'] ?? 'Alianza estratégica homologada.'
     ];
 
@@ -299,7 +299,7 @@ Flight::route('GET /item/@slug', function ($slug) {
 
     $data['logo'] = 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg';
     $data['title'] = $item['titulo'];
-    $data['favicon'] = $varhost . '/public/ico/favicon.png';
+    $data['favicon'] = 'https://barsi-img.b-cdn.net/t_mrg/ANd3ax.jpeg';
     $data['base'] = $base;
     $data['version'] = $version;
     $data['visitas'] = $mis_visitas;    
