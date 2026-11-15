@@ -1,22 +1,12 @@
-<!-- Sección Productos Relacionados -->
+<!-- Sección Convenios -->
 <div class="mt-4 pt-4 border-top">
   <h3 class="text-center mb-4" style="font-size: 2rem;">CONVENIOS</h3>
   <div class="row justify-content-center g-3">
     {{#convenio}}
     <div class="col-6 col-md-3">
-      <div class="tile-card tile-convenio"
-           data-title="{{titulo}}" 
-           data-html="{{{html02}}}">
-        <img src="{{url_img}}" alt="{{titulo}}">
-        <div class="tile-footer"><span>{{titulo}}</span> <i class="fa-solid fa-plus"></i></div>
-        <div class="tile-overlay">
-          <div class="overlay-title"><span>{{titulo}}</span> <i class="fa-solid fa-plus"></i></div>
-          <div class="overlay-text">{{{html02}}}</div>
-          <a href="javascript:void(0);" class="btn-cat-pill w-100 btn-preview-img" data-img-src="{{url_img}}">
-            <span class="pill-text">VER MÁS</span>
-            <span class="pill-circle"><i class="fa-solid fa-arrow-right fa-xs"></i></span>
-          </a>
-        </div>
+      <div class="tile-card tile-convenio">
+        <img src="{{url_img}}" alt="{{titulo}}" class="btn-preview-img" data-img-src="{{url_img}}" title="Clic para ampliar imagen" style="cursor: pointer;">
+        <div class="tile-footer"><span>{{titulo}}</span></div>
       </div>
     </div>
     {{/convenio}}
